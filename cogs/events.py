@@ -58,9 +58,55 @@ class Events(commands.Cog):
 
 		_embed = discord.Embed(colour=0x2F3136)
 		_embed.set_author(name="Security Bot Events")
+		_embed.add_field(name="Action:", value=f"`ON_MESSAGE_JOIN`", inline=False)
 		_embed.add_field(name="Action taken:", value=action, inline=False)
 		_embed.add_field(name="Action Code:", value=code, inline=False)
 		_embed.add_field(name="User:", value=f"{member.name}#{member.discriminator}(`{member.id}`)")
+		_embed.set_footer(text="Security Bot", icon_url=member.guild.me.display_avatar)
+		await log.send(embed=_embed)
+	
+	@commands.Cog.listener()
+	async def on_member_remove(self, member):
+		log = os.getenv("LOG")
+		log = await self.bot.fetch_channel(log)
+		if member.leave_method == "kicked":
+			code = "UK"
+		elif member.leave_method == "banned":
+			code = "UB"
+		else:
+			code = "UL"
+		_embed = discord.Embed(colour=0x2F3136)
+		_embed.set_author(name="Security Bot Events")
+		_embed.add_field(name="Action:", value=f"`ON_MEMBER_REMOVE`", inline=False)
+		_embed.add_field(name="Action Occurance:", value=member.leave_method, inline=False)
+		_embed.add_field(name="Action Code:", value=code, inline=False)
+		_embed.add_field(name="User:", value=f"{member.name}#{member.discriminator}(`{member.id}`)")
+		_embed.set_footer(text="Security Bot", icon_url=member.guild.me.display_avatar)
+		await log.send(embed=_embed)
+
+	@commands.Cog.listener()
+	async def on_message_delete(self, message):
+		log = os.getenv("LOG")
+		log = await self.bot.fetch_channel(log)
+		_embed = discord.Embed(colour=0x2F3136)
+		_embed.set_author(name="Security Bot Events")
+		_embed.add_field(name="Action:", value=f"`ON_MESSAGE_DELETE`", inline=False)
+		_embed.add_field(name="Action Content:", value=f"```\n{message.content.replace('`', '')}\n```", inline=False)
+		_embed.add_field(name="User:", value=f"{message.authoer.name}#{message.author.discriminator}(`{message.author.id}`)")
+		_embed.set_footer(text="Security Bot", icon_url=message.guild.me.display_avatar)
+		await log.send(embed=_embed)
+
+	@commands.Cog.listener()
+	async def on_message_edit(self, original_message, edited_message):
+		log = os.getenv("LOG")
+		log = await self.bot.fetch_channel(log)
+		_embed = discord.Embed(colour=0x2F3136)
+		_embed.set_author(name="Security Bot Events")
+		_embed.add_field(name="Action:", value=f"`ON_MESSAGE_EDIT`", inline=False)
+		_embed.add_field(name="Original Content:", value=f"```\n{original_message.content.replace('`', '')}\n```", inline=False)
+		_embed.add_field(name="Edited Content:", value=f"```\n{edited_message.content.replace('`', '')}\n```", inline=False)
+		_embed.add_field(name="User:", value=f"{original_message.authoer.name}#{original_message.author.discriminator}(`{original_message.author.id}`)")
+		_embed.set_footer(text="Security Bot", icon_url=original_message.guild.me.display_avatar)
 		await log.send(embed=_embed)
 
 def setup(bot):
