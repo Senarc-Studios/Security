@@ -14,11 +14,11 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_member_join(self, member):
-		log = os.getenv("LOG")
+		log = int(os.getenv("LOG"))
 		log = await self.bot.fetch_channel(log)
 		if utils.get_data('config', f"{member.id}") == "guests":
 			try:
-				role = await member.guild.fetch_role(os.getenv("GUEST_ROLE"))
+				role = await member.guild.fetch_role(int(os.getenv("GUEST_ROLE")))
 				await member.add_roles(role, reason="User registered as guest.")
 				action = "Authorised as guest"
 				code = "01AG"
@@ -30,7 +30,7 @@ class Events(commands.Cog):
 
 		elif utils.get_data('config', f"{member.id}") == "privileged":
 			try:
-				role = await member.guild.fetch_role(os.getenv("PRIVILEGED_ROLE"))
+				role = await member.guild.fetch_role(int(os.getenv("PRIVILEGED_ROLE")))
 				await member.add_roles(role, reason="User registered as privileged")
 				action = "Authorised as privileged"
 				code = "01AP"
@@ -67,7 +67,7 @@ class Events(commands.Cog):
 	
 	@commands.Cog.listener()
 	async def on_member_remove(self, member):
-		log = os.getenv("LOG")
+		log = int(os.getenv("LOG"))
 		log = await self.bot.fetch_channel(log)
 		if member.leave_method == "kicked":
 			code = "UK"
@@ -86,7 +86,7 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_message_delete(self, message):
-		log = os.getenv("LOG")
+		log = int(os.getenv("LOG"))
 		log = await self.bot.fetch_channel(log)
 		_embed = discord.Embed(colour=0x2F3136)
 		_embed.set_author(name="Security Bot Events")
@@ -98,7 +98,7 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_message_edit(self, original_message, edited_message):
-		log = os.getenv("LOG")
+		log = int(os.getenv("LOG"))
 		log = await self.bot.fetch_channel(log)
 		_embed = discord.Embed(colour=0x2F3136)
 		_embed.set_author(name="Security Bot Events")

@@ -9,7 +9,7 @@ async def log_event(
 		embed = discord.Embed(description='> **' + json["action"].upper() + "**\n\n" + json["description"])
 		embed.set_author(name=json["header"])
 		embed.set_footer(text=json["footer"])
-		channel = bot.fetch_channel(utils.env("EVENTS"))
+		channel = bot.fetch_channel(int(utils.env("EVENTS")))
 		await channel.send(embed=embed)
 		return True
 	except:
