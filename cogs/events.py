@@ -6,32 +6,39 @@ from discord.ext import commands
 def output(content):
 	import datetime
 	time = datetime.datetime.now()
-	print(time.strftime(f"[%H:%M:%S]: {content}"))
+	print(time.strftime(f"[%H:%M:%S]: ") + content)
 
 class Events(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
 	@commands.Cog.listener()
-	async def on_member_join(member):
+	async def on_member_join(self, member):
 		log = os.getenv("LOG")
-		if utils.get_data('config', member.id) == "guests":
+		log = await self.bot.fetch_channel(log)
+		if utils.get_data('config', f"{member.id}") == "guests":
 			try:
-				role = discord.utils.get(member.guild.roles, id=os.getenv("GUEST_ROLE"))
-				member.add_roles(role, reason="User registered as guest.")
+				role = await member.guild.fetch_role(os.getenv("GUEST_ROLE"))
+				await member.add_roles(role, reason="User registered as guest.")
 				action = "Authorised as guest"
 				code = "01AG"
+				output(f"Guest \"{member.name}\" joined.")
 			except:
+				action = "Authorised as guest"
 				code = "ERAG"
+				output(f"Guest \"{member.name}\" joined, Unable to give role.")
 
-		elif utils.get_data('config', member.id) == "privileged":
+		elif utils.get_data('config', f"{member.id}") == "privileged":
 			try:
-				role = discord.utils.get(member.guild.roles, id=os.getenv("PRIVILEGED_ROLE"))
-				member.add_roles(role, reason="User registered as privileged")
+				role = await member.guild.fetch_role(os.getenv("PRIVILEGED_ROLE"))
+				await member.add_roles(role, reason="User registered as privileged")
 				action = "Authorised as privileged"
 				code = "01AP"
+				output(f"Privileged User \"{member.name}\" joined.")
 			except:
+				action = "Authorised as privileged"
 				code = "ERAG"
+				output(f"Privileged User \"{member.name}\" joined, Unable to give role.")
 
 		else:
 			try:
@@ -40,19 +47,19 @@ class Events(commands.Cog):
 				embed.set_footer(text="Security Bot", icon_url=member.guild.me.display_avatar)
 				await member.send(embed=embed)
 				code = "01KU"
-			except:
+			except Exception:
 				code = "EMKU"
 			try:
 				await member.kick(reason=f"Unauthorised User.")
 				action = "Kicked for being Unauthorised"
-			except:
+			except Exception:
 				action = "Kicked for being Unauthorised"
 				code = "EUKU"
 
 		_embed = discord.Embed(colour=0x2F3136)
 		_embed.set_author(name="Security Bot Events")
-		_embed.add_field(name="Action taken:", value=action)
-		_embed.add_field(name="Action Code:", value=code)
+		_embed.add_field(name="Action taken:", value=action, inline=False)
+		_embed.add_field(name="Action Code:", value=code, inline=False)
 		_embed.add_field(name="User:", value=f"{member.name}#{member.discriminator}(`{member.id}`)")
 		await log.send(embed=_embed)
 

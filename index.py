@@ -39,7 +39,9 @@ def output(content):
 	time = datetime.datetime.now()
 	print(time.strftime(f"[%H:%M:%S]: {content}"))
 
-bot = commands.Bot(command_prefix="!", slash_interactions=True, message_commands=True)
+intents = discord.Intents.all()
+intents.members = True
+bot = commands.Bot(command_prefix="!", intents=intents, slash_interactions=True, message_commands=True)
 
 @bot.event
 async def on_ready():
