@@ -14,7 +14,7 @@ async def log_event(
 	try:
 		embed = discord.Embed(description='> **' + json["action"].upper() + "**\n\n" + json["description"], colour=0x2F3136)
 		embed.set_author(name=json["header"])
-		embed.set_footer(text=json["footer"])
+		embed.set_footer(text="Security Bot", icon_url=member.guild.me.display_avatar)
 		channel = await bot.fetch_channel(os.getenv("EVENTS"))
 		await channel.send(embed=embed)
 		return True
@@ -29,8 +29,7 @@ def build_embed(
 	BUILD_TEMPLATE = {
 		"action": action,
 		"header": header,
-		"description": description,
-		"footer": "Security Bot"
+		"description": description
 	}
 	return BUILD_TEMPLATE
 
@@ -77,6 +76,18 @@ async def register(ctx, type: str, id: str):
 		await ctx.send(f":ballot_box_with_check: Registered id `{id}` as `{type}`.", ephemeral=True)
 	else:
 		await ctx.send(f":no_entry_sign: Invalid type!", ephemeral=True)
+
+@bot.command(message_command=False)
+async def unregister(ctx, id: str):
+	try:
+		id = int(id)
+	except:
+		return await ctx.send(f":no_entry_sign: Invalid User ID.")
+	if utils.get_data('config', id) != "guest" and utils.get_data('config', id) != "privileged":
+		return await ctx.send(f":ballot_box_with_check: Unregistered id `{id}`.")
+	else:
+		utils.register_value('config', id, None)
+		await ctx.send(f":ballot_box_with_check: Registered id `{id}` as `{type}`.", ephemeral=True)
 
 def main():
 	for file in os.listdir("./cogs"):
