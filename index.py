@@ -1,20 +1,53 @@
 import os
 import utils
+import asyncio
 import discord
-import logging
-from discord import commands
-from .utils import log_event, build_embed
+from dotenv import load_dotenv, find_dotenv
+from discord.ext import commands
+
+load_dotenv(find_dotenv())
+
+async def log_event(
+	json = None,
+	bot = None
+	):
+	try:
+		embed = discord.Embed(description='> **' + json["action"].upper() + "**\n\n" + json["description"], colour=0x2F3136)
+		embed.set_author(name=json["header"])
+		embed.set_footer(text=json["footer"])
+		channel = await bot.fetch_channel(os.getenv("EVENTS"))
+		await channel.send(embed=embed)
+		return True
+	except:
+		return False
+
+def build_embed(
+	action = None,
+	header = None,
+	description = None
+	):
+	BUILD_TEMPLATE = {
+		"action": action,
+		"header": header,
+		"description": description,
+		"footer": "Security Bot"
+	}
+	return BUILD_TEMPLATE
+
+def output(content):
+	import datetime
+	time = datetime.datetime.now()
+	print(time.strftime(f"[%H:%M:%S]: {content}"))
 
 bot = commands.Bot(command_prefix="!", slash_interactions=True, message_commands=True)
-logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='[%H:%M:%S]: ')
 
 @bot.event
 async def on_ready():
 	embed_dict = build_embed("Bot Ready", "Security Bot Events", f"Bot has started at {discord.Timestamp.now()}.")
-	if log_event(embed_dict, bot=bot) == True:
-		logging.info("Bot Started.")
+	if await log_event(embed_dict, bot=bot) == True:
+		output("Bot Started.")
 	else:
-		logging.info("Bot Started, Unable to log event.")
+		output("Bot Started, Unable to log event.")
 
 @bot.command(aliases = ["test", "check-alive"])
 async def ca(ctx):
@@ -22,10 +55,36 @@ async def ca(ctx):
 		await ctx.send(f":ballot_box_with_check: Security bot is alive!", ephemeral=True)
 	except Exception as error:
 		embed_dict = ("ERROR", "Security Bot Errors", f"```py\n{error}\n```")
-		if log_event(embed_dict, bot=bot) == True:
-			logging.info("An error occured, Successfully logged error.")
+		if await log_event(embed_dict, bot=bot) == True:
+			output("An error occured, Successfully logged error.")
 		else:
-			logging.info("An error occured, Unable to log error.")
+			output("An error occured, Unable to log error.")
 		await ctx.send(f":warning: An error has occured while sending Ephemeral Message:\n\n```py\n{error}\n```")
 
-bot.run(utils.env("TOKEN"))
+@bot.command(message_command=False)
+async def register(ctx, type: str, id: str):
+	try:
+		id = int(id)
+	except:
+		return await ctx.send(f":no_entry_sign: Invalid User ID.")
+	if type.lower() == "guest":
+		utils.register_value('config', id, 'guests')
+		await ctx.send(f":ballot_box_with_check: Registered id `{id}` as `{type}`.", ephemeral=True)
+	elif type.lower() == "privileged":
+		utils.register_value('config', id, 'privileged')
+		await ctx.send(f":ballot_box_with_check: Registered id `{id}` as `{type}`.", ephemeral=True)
+	else:
+		await ctx.send(f":no_entry_sign: Invalid type!", ephemeral=True)
+
+def main():
+	for file in os.listdir("./cogs"):
+		if file.endswith(".py"):
+			name = file[:-3]
+			try:
+				bot.load_extension(f"cogs.{name}")
+				output(f"\"{name}\" Cog Loaded.")
+			except Exception as error:
+				output(f"An error occured while loading \"{name}\" cog.")
+	bot.run(os.getenv("TOKEN"))
+
+main()
