@@ -126,6 +126,16 @@ async def fetch(ctx):
 	except Exception as error:
 		await ctx.send(f":warning: An error occurred while fetching updates and restarting.\n\n```py\n{error}\n```", ephemeral=True)
 
+@bot.command(message_command=False)
+async def pull(ctx):
+	if owner(ctx.author) == False:
+		return await ctx.send(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
+	try:
+		os.system("git pull")
+		await ctx.send(f":ballot_box_with_check: `$ git pull` executed with success.", ephemeral=True)
+	except Exception as error:
+		return await ctx.send(f":warning: An error occurred while pulling github updates.\n\n```py\n{error}\n```", ephemeral=True)
+
 def main():
 	for file in os.listdir("./cogs"):
 		if file.endswith(".py"):
