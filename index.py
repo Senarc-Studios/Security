@@ -8,8 +8,7 @@ from discord.ext import commands
 load_dotenv(find_dotenv())
 
 def env(variable: str):
-	load_dotenv(find_dotenv())
-	os.getenv(variable)
+	return os.getenv(f"{variable}")
 
 async def log_event(
 	json = None,
@@ -43,7 +42,7 @@ def output(content):
 	print(time.strftime(f"[%H:%M:%S]: {content}"))
 
 def owner(author):
-	if author.id == env("OWNER"):
+	if int(author.id) == int(env("OWNER")):
 		return True
 	else:
 		return False
@@ -60,7 +59,7 @@ async def on_ready():
 	else:
 		output("Bot Started, Unable to log event.")
 
-@bot.command(aliases = ["test", "check-alive"])
+@bot.command(slash_interaction=True, aliases = ["test", "check-alive"])
 async def ca(ctx):
 	try:
 		await ctx.send(f":ballot_box_with_check: Security bot is alive!", ephemeral=True)
@@ -74,7 +73,7 @@ async def ca(ctx):
 
 @bot.command(message_command=False)
 async def register(ctx, type: str, id: str):
-	if not owner(ctx.author):
+	if owner(ctx.author) == False:
 		return await ctx.send(f":no_entry_sign: You don't have permissions do use this command.", ephemeral=True)
 	try:
 		id = int(id)
@@ -91,7 +90,7 @@ async def register(ctx, type: str, id: str):
 
 @bot.command(message_command=False)
 async def unregister(ctx, id: str):
-	if not owner(ctx.author):
+	if not owner(ctx.author) == False:
 		return await ctx.send(f":no_entry_sign: You don't have permissions do use this command.", ephemeral=True)
 	try:
 		id = int(id)
