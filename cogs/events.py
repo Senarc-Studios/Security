@@ -120,5 +120,22 @@ class Events(commands.Cog):
 		_embed.set_footer(text="Security Bot", icon_url=original_message.guild.me.display_avatar)
 		await log.send(embed=_embed)
 
+	@commands.Cog.listener()
+	async def on_invite_create(self, invite):
+		output(f"Auto-deleted a invite that was created by \"{invite.inviter.name}\".")
+		log = int(env("LOG"))
+		log = await self.bot.fetch_channel(log)
+		_embed = discord.Embed(colour=0x2F3136)
+		_embed.set_author(name="Security Bot Events")
+		_embed.add_field(name="Action:", value=f"`ON_INVITE_CREATE`", inline=False)
+		_embed.add_field(name="Action Taken:", value=f"`INVITE_DELETE`", inline=False)
+		_embed.add_field(name="Invite Code:", value=f"`{invite.code}`", inline=False)
+		_embed.add_field(name="Invite Channel:", value=f"<#{invite.channel.id}>", inline=False)
+		_embed.add_field(name="User:", value=f"{invite.inviter.name}#{invite.inviter.discriminator}(`{invite.inviter.id}`)", inline=False)
+		_embed.add_field(name="Time:", value=f"{discord.Timestamp.now()}", inline=False)
+		_embed.set_footer(text="Security Bot", icon_url=self.bot.user.display_avatar)
+		await invite.delete(reason="AUTO-DELETE-PROTECTION-RULE")
+		await log.send(embed=_embed)
+
 def setup(bot):
 	bot.add_cog(Events(bot))
