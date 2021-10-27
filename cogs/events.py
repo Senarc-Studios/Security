@@ -23,7 +23,7 @@ class Events(commands.Cog):
 		log = await self.bot.fetch_channel(log)
 		if utils.get_data('config', f"{member.id}") == "guests":
 			try:
-				role = await member.guild.fetch_role(int(env("GUEST_ROLE")))
+				role = await self.bot.fetch_role(int(env("GUEST_ROLE")))
 				await member.add_roles(role, reason="User registered as guest.")
 				action = "Authorised as guest"
 				code = "01AG"
@@ -35,7 +35,7 @@ class Events(commands.Cog):
 
 		elif utils.get_data('config', f"{member.id}") == "privileged":
 			try:
-				role = await member.guild.fetch_role(int(env("PRIVILEGED_ROLE")))
+				role = await self.bot.fetch_role(int(env("PRIVILEGED_ROLE")))
 				await member.add_roles(role, reason="User registered as privileged")
 				action = "Authorised as privileged"
 				code = "01AP"
