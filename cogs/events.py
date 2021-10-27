@@ -128,6 +128,14 @@ class Events(commands.Cog):
 	async def on_invite_create(self, invite):
 		output(f"Auto-deleted a invite that was created by \"{invite.inviter.name}\".")
 		log = int(env("LOG"))
+		if utils.get_data('config', f'{invite.inviter.id}') == 'notified':
+			null = None
+		else:
+			embed = discord.Embed(description="Your Invite has been auto-deleted, you are not allowed to create invites since this is a private server.\n\nIf you want to invite someone to the server you should use https://api.senarc.org/authorise/lab this will help us identify if a user is authorised to join the server.\n\nIf you think this is a mistake, please contact a administrator.", colour=0xFED42A)
+			embed.set_author(name="No Invites Allowed", icon_url="https://i.ibb.co/3YKyhxJ/black-exclamation-mark-on-yellow-260nw-1902354208-modified.png")
+			embed.set_footer(text="Security Bot", icon_url=self.bot.user.display_avatar)
+			await invite.inviter.send(embed=embed)
+			utils.register_value('config', f'{invite}', 'notified')
 		log = await self.bot.fetch_channel(log)
 		_embed = discord.Embed(colour=0x2F3136)
 		_embed.set_author(name="Security Bot Events")
