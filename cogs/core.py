@@ -8,9 +8,8 @@ class Core(commands.Cog):
         self.bot = bot
     
     @commands.command()
-    async def restart(self, ctx):
-        await ctx.send(f":ballot_box_with_check: Restarting Bot...", ephemeral=True)
-        os.system("python3 main.py")
+    async def shutdown(self, ctx):
+        await ctx.send(f":ballot_box_with_check: Bot Shutting Down...", ephemeral=True)
         sys.exit()
 
 def setup(bot):
