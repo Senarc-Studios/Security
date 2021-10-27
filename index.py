@@ -14,7 +14,7 @@ async def log_event(
 	try:
 		embed = discord.Embed(description='> **' + json["action"].upper() + "**\n\n" + json["description"], colour=0x2F3136)
 		embed.set_author(name=json["header"])
-		embed.set_footer(text="Security Bot", icon_url=member.guild.me.display_avatar)
+		embed.set_footer(text="Security Bot", icon_url=bot.user.display_avatar)
 		channel = await bot.fetch_channel(os.getenv("EVENTS"))
 		await channel.send(embed=embed)
 		return True
