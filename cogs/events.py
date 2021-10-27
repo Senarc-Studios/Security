@@ -135,7 +135,7 @@ class Events(commands.Cog):
 			embed.set_author(name="No Invites Allowed", icon_url="https://i.ibb.co/3YKyhxJ/black-exclamation-mark-on-yellow-260nw-1902354208-modified.png")
 			embed.set_footer(text="Security Bot", icon_url=self.bot.user.display_avatar)
 			await invite.inviter.send(embed=embed)
-			utils.register_value('config', f'{invite}', 'notified')
+			utils.register_value('config', f'{invite.inviter.id}', 'notified')
 		log = await self.bot.fetch_channel(log)
 		_embed = discord.Embed(colour=0x2F3136)
 		_embed.set_author(name="Security Bot Events")
