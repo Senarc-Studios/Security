@@ -24,7 +24,7 @@ class Log(commands.Cog):
 		_embed.set_author(name="Security Bot Events")
 		_embed.add_field(name="Event:", value=f"`ON_COMMAND`", inline=False)
 		_embed.add_field(name="Command:", value=ctx.command, inline=False)
-		_embed.add_field(name="User:", value=f"{ctx.author.name}#{ctx.author.discriminator}(`{ctx.author.id}`)", inlin=False)
+		_embed.add_field(name="User:", value=f"{ctx.author.name}#{ctx.author.discriminator}(`{ctx.author.id}`)", inline=False)
 		_embed.add_field(name="Time:", value=f"{discord.Timestamp.now()}", inline=False)
 		_embed.set_footer(text="Security Bot", icon_url=self.bot.user.display_avatar)
 		await events.send(embed=_embed)
