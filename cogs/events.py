@@ -93,6 +93,8 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_message_delete(self, message):
+		if message.content == "":
+			return
 		output(f"{message.author.name}'s Message got deleted.")
 		log = int(env("LOG"))
 		log = await self.bot.fetch_channel(log)
@@ -107,6 +109,8 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_message_edit(self, original_message, edited_message):
+		if original_message == "" or edited_message == "":
+			return
 		output(f"{original_message.author.name} Edited their message.")
 		log = int(env("LOG"))
 		log = await self.bot.fetch_channel(log)
