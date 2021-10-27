@@ -7,6 +7,10 @@ from discord.ext import commands
 
 load_dotenv(find_dotenv())
 
+def env(variable: str):
+	load_dotenv(find_dotenv())
+	os.getenv(variable)
+
 async def log_event(
 	json = None,
 	bot = None
@@ -15,7 +19,7 @@ async def log_event(
 		embed = discord.Embed(description='> **' + json["action"].upper() + "**\n\n" + json["description"], colour=0x2F3136)
 		embed.set_author(name=json["header"])
 		embed.set_footer(text="Security Bot", icon_url=bot.user.display_avatar)
-		channel = await bot.fetch_channel(os.getenv("EVENTS"))
+		channel = await bot.fetch_channel(env("EVENTS"))
 		await channel.send(embed=embed)
 		return True
 	except:
@@ -39,7 +43,7 @@ def output(content):
 	print(time.strftime(f"[%H:%M:%S]: {content}"))
 
 def owner(author):
-	if author.id == os.getenv("OWNER"):
+	if author.id == env("OWNER"):
 		return True
 	else:
 		return False
@@ -108,6 +112,6 @@ def main():
 				output(f"\"{name}\" Cog Loaded.")
 			except Exception as error:
 				output(f"An error occured while loading \"{name}\" cog.")
-	bot.run(os.getenv("TOKEN"))
+	bot.run(env("TOKEN"))
 
 main()
