@@ -59,8 +59,8 @@ async def on_ready():
 	else:
 		output("Bot Started, Unable to log event.")
 
-@bot.command(aliases = ["test", "check-alive"])
-async def ca(ctx):
+@bot.command(brief="Checks if the bot is alive.", aliases = ["ca", "test", "check-alive"])
+async def alive(ctx):
 	try:
 		await ctx.send(f":ballot_box_with_check: Security bot is alive!", ephemeral=True)
 	except Exception as error:
@@ -71,7 +71,7 @@ async def ca(ctx):
 			output("An error occurred, Unable to log error.")
 		await ctx.send(f":warning: An error has occurred while sending Ephemeral Message:\n\n```py\n{error}\n```")
 
-@bot.command(message_command=False)
+@bot.command(brief="Registers a user for authorising.", message_command=False)
 async def register(ctx, type: str, id: str):
 	if owner(ctx.author) == False:
 		return await ctx.send(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
@@ -88,7 +88,7 @@ async def register(ctx, type: str, id: str):
 	else:
 		await ctx.send(f":no_entry_sign: Invalid type!", ephemeral=True)
 
-@bot.command(message_command=False)
+@bot.command(brief="Unregisters a user from authorising.", message_command=False)
 async def unregister(ctx, id: str):
 	if owner(ctx.author) == False:
 		return await ctx.send(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
@@ -102,7 +102,7 @@ async def unregister(ctx, id: str):
 		utils.register_value('config', id, None)
 		await ctx.send(f":ballot_box_with_check: Registered id `{id}` as `{type}`.", ephemeral=True)
 
-@bot.command(message_command=False)
+@bot.command(brief="Reloads a cog.", message_command=False)
 async def reload(ctx, extension: str):
 	if owner(ctx.author) == False:
 		return await ctx.send(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
@@ -114,7 +114,7 @@ async def reload(ctx, extension: str):
 		output(f"An error occurred while reloading \"{extension}\" cog.")
 		await ctx.send(f":warning: An error occurred while reloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
 
-@bot.command(message_command=False)
+@bot.command(brief="Fetches updates from github and restarts the bot.", message_command=False)
 async def fetch(ctx):
 	if owner(ctx.author) == False:
 		return await ctx.send(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
@@ -126,7 +126,7 @@ async def fetch(ctx):
 	except Exception as error:
 		await ctx.send(f":warning: An error occurred while fetching updates and restarting.\n\n```py\n{error}\n```", ephemeral=True)
 
-@bot.command(message_command=False)
+@bot.command(brief="Pulls updates from Github", message_command=False)
 async def pull(ctx):
 	if owner(ctx.author) == False:
 		return await ctx.send(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
