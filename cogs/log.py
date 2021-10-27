@@ -20,6 +20,7 @@ class Log(commands.Cog):
 	@commands.Cog.listener()
 	async def on_command(self, ctx):
 		events = int(env("EVENTS"))
+		events = await self.bot.fetch_channel(events)
 		_embed = discord.Embed(colour=0x2F3136)
 		_embed.set_author(name="Security Bot Events")
 		_embed.add_field(name="Event:", value=f"`ON_COMMAND`", inline=False)
