@@ -59,7 +59,7 @@ async def on_ready():
 	else:
 		output("Bot Started, Unable to log event.")
 
-@bot.command(slash_interaction=True, aliases = ["test", "check-alive"])
+@bot.command(aliases = ["test", "check-alive"])
 async def ca(ctx):
 	try:
 		await ctx.send(f":ballot_box_with_check: Security bot is alive!", ephemeral=True)
