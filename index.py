@@ -90,7 +90,7 @@ async def register(ctx, type: str, id: str):
 
 @bot.command(message_command=False)
 async def unregister(ctx, id: str):
-	if not owner(ctx.author) == False:
+	if owner(ctx.author) == False:
 		return await ctx.send(f":no_entry_sign: You don't have permissions do use this command.", ephemeral=True)
 	try:
 		id = int(id)
