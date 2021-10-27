@@ -66,15 +66,15 @@ async def ca(ctx):
 	except Exception as error:
 		embed_dict = ("ERROR", "Security Bot Errors", f"```py\n{error}\n```")
 		if await log_event(embed_dict, bot=bot) == True:
-			output("An error occured, Successfully logged error.")
+			output("An error occurred, Successfully logged error.")
 		else:
-			output("An error occured, Unable to log error.")
-		await ctx.send(f":warning: An error has occured while sending Ephemeral Message:\n\n```py\n{error}\n```")
+			output("An error occurred, Unable to log error.")
+		await ctx.send(f":warning: An error has occurred while sending Ephemeral Message:\n\n```py\n{error}\n```")
 
 @bot.command(message_command=False)
 async def register(ctx, type: str, id: str):
 	if owner(ctx.author) == False:
-		return await ctx.send(f":no_entry_sign: You don't have permissions do use this command.", ephemeral=True)
+		return await ctx.send(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
 	try:
 		id = int(id)
 	except:
@@ -91,7 +91,7 @@ async def register(ctx, type: str, id: str):
 @bot.command(message_command=False)
 async def unregister(ctx, id: str):
 	if owner(ctx.author) == False:
-		return await ctx.send(f":no_entry_sign: You don't have permissions do use this command.", ephemeral=True)
+		return await ctx.send(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
 	try:
 		id = int(id)
 	except:
@@ -102,6 +102,30 @@ async def unregister(ctx, id: str):
 		utils.register_value('config', id, None)
 		await ctx.send(f":ballot_box_with_check: Registered id `{id}` as `{type}`.", ephemeral=True)
 
+@bot.command(message_command=False)
+async def reload(ctx, extension: str):
+	if owner(ctx.author) == False:
+		return await ctx.send(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
+	try:
+		bot.reload_extension(f"cogs.{extension}")
+		output(f"Reloaded Cog \"{extension}\"")
+		await ctx.send(f":ballot_box_with_check: **`cogs.{extension}` reloaded.**", ephemeral=True)
+	except Exception as error:
+		output(f"An error occurred while reloading \"{extension}\" cog.")
+		await ctx.send(f":warning: An error occurred while reloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
+
+@bot.command(message_command=False)
+async def fetch(ctx):
+	if owner(ctx.author) == False:
+		return await ctx.send(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
+	try:
+		os.system(f"git pull")
+		await ctx.send(f"Fetched and updated from github, reloading bot now...", ephemeral=True)
+		os.system(f"python3 index.py")
+		await bot.logout()
+	except Exception as error:
+		await ctx.send(f":warning: An error occurred while fetching updates and restarting.\n\n```py\n{error}\n```", ephemeral=True)
+
 def main():
 	for file in os.listdir("./cogs"):
 		if file.endswith(".py"):
@@ -110,7 +134,7 @@ def main():
 				bot.load_extension(f"cogs.{name}")
 				output(f"\"{name}\" Cog Loaded.")
 			except Exception as error:
-				output(f"An error occured while loading \"{name}\" cog.")
+				output(f"An error occurred while loading \"{name}\" cog.")
 	bot.run(env("TOKEN"))
 
 main()
