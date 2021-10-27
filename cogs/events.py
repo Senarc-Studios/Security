@@ -11,7 +11,7 @@ def output(content):
 
 def env(variable: str):
 	load_dotenv(find_dotenv())
-	os.getenv(variable)
+	return os.getenv(variable)
 
 class Events(commands.Cog):
 	def __init__(self, bot):
