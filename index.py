@@ -38,6 +38,12 @@ def output(content):
 	time = datetime.datetime.now()
 	print(time.strftime(f"[%H:%M:%S]: {content}"))
 
+def owner(author):
+	if author.id == os.getenv("OWNER"):
+		return True
+	else:
+		return False
+
 intents = discord.Intents.all()
 intents.members = True
 bot = commands.Bot(command_prefix="!", intents=intents, slash_interactions=True, message_commands=True)
@@ -64,6 +70,8 @@ async def ca(ctx):
 
 @bot.command(message_command=False)
 async def register(ctx, type: str, id: str):
+	if not owner(ctx.author):
+		return await ctx.send(f":no_entry_sign: You don't have permissions do use this command.", ephemeral=True)
 	try:
 		id = int(id)
 	except:
@@ -79,6 +87,8 @@ async def register(ctx, type: str, id: str):
 
 @bot.command(message_command=False)
 async def unregister(ctx, id: str):
+	if not owner(ctx.author):
+		return await ctx.send(f":no_entry_sign: You don't have permissions do use this command.", ephemeral=True)
 	try:
 		id = int(id)
 	except:
