@@ -86,7 +86,7 @@ class Events(commands.Cog):
 		_embed.set_author(name="Security Bot Events")
 		_embed.add_field(name="Action:", value=f"`ON_MEMBER_REMOVE`", inline=False)
 		_embed.add_field(name="Action Code:", value=code, inline=False)
-		_embed.add_field(name="User:", value=f"{member.name}#{member.discriminator}(`{member.id}`)", inlin=False)
+		_embed.add_field(name="User:", value=f"{member.name}#{member.discriminator}(`{member.id}`)", inline=False)
 		_embed.add_field(name="Time:", value=f"{discord.Timestamp.now()}", inline=False)
 		_embed.set_footer(text="Security Bot", icon_url=member.guild.me.display_avatar)
 		await log.send(embed=_embed)
@@ -109,7 +109,7 @@ class Events(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_message_edit(self, original_message, edited_message):
-		if original_message == "" or edited_message == "":
+		if original_message == "" or edited_message == "" or original_message.author.bot:
 			return
 		output(f"{original_message.author.name} Edited their message.")
 		log = int(env("LOG"))
@@ -121,7 +121,7 @@ class Events(commands.Cog):
 		_embed.add_field(name="Edited Content:", value=f"```\n{edited_message.content.replace('`', '')}\n```", inline=False)
 		_embed.add_field(name="User:", value=f"{original_message.author.name}#{original_message.author.discriminator}(`{original_message.author.id}`)", inline=False)
 		_embed.add_field(name="Time:", value=f"{discord.Timestamp.now()}", inline=False)
-		_embed.set_footer(text="Security Bot", icon_url=original_message.guild.me.display_avatar)
+		_embed.set_footer(text="Security Bot", icon_url=self.bot.user.display_avatar)
 		await log.send(embed=_embed)
 
 	@commands.Cog.listener()
