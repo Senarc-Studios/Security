@@ -61,7 +61,8 @@ class Security(commands.Bot):
 		)
 
 	async def start(*args, **kwargs):
-		cool_utils.JSON.open()
+		cool_utils.JSON.open('config')
+		Terminal.start_log()
 		await super().start(*args, **kwargs)
 
 	async def close():
