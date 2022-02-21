@@ -65,7 +65,7 @@ class Security(commands.Bot):
 		Terminal.start_log()
 		await super().start(*args, **kwargs)
 
-	async def close():
+	async def close(self):
 		Terminal.display("Gracefully Exiting Bot...")
 		Terminal.stop_log()
 		await super().close()
