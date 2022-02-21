@@ -1,13 +1,13 @@
 import os
-import utils
+import cool_utils
 import discord
+
+from cool_utils import Terminal
 from dotenv import find_dotenv, load_dotenv
 from discord.ext import commands
 
 def output(content):
-	import datetime
-	time = datetime.datetime.now()
-	print(time.strftime(f"[%H:%M:%S]: ") + content)
+	Terminal.display(content)
 
 def env(variable: str):
 	load_dotenv(find_dotenv())
@@ -21,7 +21,7 @@ class Events(commands.Cog):
 	async def on_member_join(self, member):
 		log = int(env("LOG"))
 		log = await self.bot.fetch_channel(log)
-		if utils.get_data('config', f"{member.id}") == "guests":
+		if cool_utils.JSON.get_data(f"{member.id}") == "guests":
 			try:
 				role = discord.utils.get(member.guild.roles, id=int(env("GUEST_ROLE")))
 				await member.add_roles(role, reason="User registered as guest.")
@@ -33,7 +33,7 @@ class Events(commands.Cog):
 				code = "ERAG"
 				output(f"Guest \"{member.name}\" joined, Unable to give role.")
 
-		elif utils.get_data('config', f"{member.id}") == "privileged":
+		elif cool_utils.JSON.get_data(f"{member.id}") == "privileged":
 			try:
 				role = discord.utils.get(member.guild.roles, id=int(env("PRIVILEGED_ROLE")))
 				await member.add_roles(role, reason="User registered as privileged")
@@ -128,14 +128,14 @@ class Events(commands.Cog):
 	async def on_invite_create(self, invite):
 		output(f"Auto-deleted a invite that was created by \"{invite.inviter.name}\".")
 		log = int(env("LOG"))
-		if utils.get_data('config', f'{invite.inviter.id}') == 'notified':
+		if cool_utils.JSON.get_data(f'{invite.inviter.id}') == 'notified':
 			null = None
 		else:
 			embed = discord.Embed(description="Your Invite has been auto-deleted, you are not allowed to create invites since this is a private server.\n\nIf you want to invite someone to the server you should use https://api.senarc.org/authorise/lab this will help us identify if a user is authorised to join the server.\n\nIf you think this is a mistake, please contact a administrator.", colour=0xFED42A)
 			embed.set_author(name="No Invites Allowed", icon_url="https://i.ibb.co/3YKyhxJ/black-exclamation-mark-on-yellow-260nw-1902354208-modified.png")
 			embed.set_footer(text="Security Bot", icon_url=self.bot.user.display_avatar)
 			await invite.inviter.send(embed=embed)
-			utils.register_value('config', f'{invite.inviter.id}', 'notified')
+			utils.register_value(f'{invite.inviter.id}', 'notified')
 		log = await self.bot.fetch_channel(log)
 		_embed = discord.Embed(colour=0x2F3136)
 		_embed.set_author(name="Security Bot Events")

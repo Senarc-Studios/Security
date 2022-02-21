@@ -1,9 +1,11 @@
 import os
-import utils
+import cool_utils
 import asyncio
 import discord
-from dotenv import load_dotenv, find_dotenv
+
+from cool_utils import Terminal
 from discord.ext import commands
+from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 
@@ -37,9 +39,7 @@ def build_embed(
 	return BUILD_TEMPLATE
 
 def output(content):
-	import datetime
-	time = datetime.datetime.now()
-	print(time.strftime(f"[%H:%M:%S]: {content}"))
+	Terminal.display(content)
 
 def owner(author):
 	if int(author.id) == int(env("OWNER")):
@@ -49,7 +49,27 @@ def owner(author):
 
 intents = discord.Intents.all()
 intents.members = True
-bot = commands.Bot(command_prefix="!", intents=intents, slash_interactions=True, message_commands=True)
+
+class Security(commands.Bot):
+	def __init__(self):
+		super().__init__(
+			command_prefix="!",
+			intents=intents,
+			slash_commands=True,
+			message_commands=True,
+			case_insensitive=True
+		)
+
+	async def start(*args, **kwargs):
+		cool_utils.JSON.open()
+		await super().start(*args, **kwargs)
+
+	async def close():
+		Terminal.display("Gracefully Exiting Bot...")
+		Terminal.stop_log()
+		await super().close()
+
+bot = Security()
 
 @bot.event
 async def on_ready():
@@ -80,10 +100,10 @@ async def register(ctx, type: str, id: str):
 	except:
 		return await ctx.send(f":no_entry_sign: Invalid User ID.")
 	if type.lower() == "guest":
-		utils.register_value('config', id, 'guests')
+		cool_utils.JSON.register_value(id, 'guests')
 		await ctx.send(f":ballot_box_with_check: Registered id `{id}` as `{type}`.", ephemeral=True)
 	elif type.lower() == "privileged":
-		utils.register_value('config', id, 'privileged')
+		cool_utils.JSON.register_value(id, 'privileged')
 		await ctx.send(f":ballot_box_with_check: Registered id `{id}` as `{type}`.", ephemeral=True)
 	else:
 		await ctx.send(f":no_entry_sign: Invalid type!", ephemeral=True)
@@ -96,10 +116,10 @@ async def unregister(ctx, id: str):
 		id = int(id)
 	except:
 		return await ctx.send(f":no_entry_sign: Invalid User ID.")
-	if utils.get_data('config', id) != "guest" and utils.get_data('config', id) != "privileged":
+	if cool_utils.JSON.get_data(id) != "guest" and cool_utils.JSON.get_data(id) != "privileged":
 		return await ctx.send(f":ballot_box_with_check: Unregistered id `{id}`.")
 	else:
-		utils.register_value('config', id, None)
+		cool_utils.JSON.register_value(id, None)
 		await ctx.send(f":ballot_box_with_check: Registered id `{id}` as `{type}`.", ephemeral=True)
 
 @bot.command(brief="Reloads a cog.", message_command=False)

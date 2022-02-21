@@ -1,13 +1,13 @@
 import os
 import discord
-import utils
+import cool_utils
+
+from cool_utils import Terminal
 from dotenv import load_dotenv, find_dotenv
 from discord.ext import commands
 
 def output(content):
-	import datetime
-	time = datetime.datetime.now()
-	print(time.strftime(f"[%H:%M:%S]: ") + content)
+	Terminal.display(content)
 
 def env(variable: str):
 	load_dotenv(find_dotenv())
