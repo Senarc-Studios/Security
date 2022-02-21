@@ -60,7 +60,7 @@ class Security(commands.Bot):
 			case_insensitive=True
 		)
 
-	async def start(*args, **kwargs):
+	async def start(self, *args, **kwargs):
 		cool_utils.JSON.open('config')
 		Terminal.start_log()
 		await super().start(*args, **kwargs)
