@@ -67,7 +67,6 @@ class Events(commands.Cog):
 		_embed.add_field(name="Action taken:", value=action, inline=False)
 		_embed.add_field(name="Action Code:", value=f"`{code}`", inline=False)
 		_embed.add_field(name="User:", value=f"{member.name}#{member.discriminator}(`{member.id}`)", inline=False)
-		_embed.add_field(name="Time:", value=f"{discord.Timestamp.now()}", inline=False)
 		_embed.set_footer(text="Security Bot", icon_url=member.guild.me.display_avatar)
 		await log.send(embed=_embed)
 	
@@ -87,7 +86,6 @@ class Events(commands.Cog):
 		_embed.add_field(name="Action:", value=f"`ON_MEMBER_REMOVE`", inline=False)
 		_embed.add_field(name="Action Code:", value=code, inline=False)
 		_embed.add_field(name="User:", value=f"{member.name}#{member.discriminator}(`{member.id}`)", inline=False)
-		_embed.add_field(name="Time:", value=f"{discord.Timestamp.now()}", inline=False)
 		_embed.set_footer(text="Security Bot", icon_url=member.guild.me.display_avatar)
 		await log.send(embed=_embed)
 
@@ -103,7 +101,6 @@ class Events(commands.Cog):
 		_embed.add_field(name="Action:", value=f"`ON_MESSAGE_DELETE`", inline=False)
 		_embed.add_field(name="Action Content:", value=f"```\n{message.content.replace('`', '')}\n```", inline=False)
 		_embed.add_field(name="User:", value=f"{message.author.name}#{message.author.discriminator}(`{message.author.id}`)", inline=False)
-		_embed.add_field(name="Time:", value=f"{discord.Timestamp.now()}", inline=False)
 		_embed.set_footer(text="Security Bot", icon_url=message.guild.me.display_avatar)
 		await log.send(embed=_embed)
 
@@ -120,7 +117,6 @@ class Events(commands.Cog):
 		_embed.add_field(name="Original Content:", value=f"```\n{original_message.content.replace('`', '')}\n```", inline=False)
 		_embed.add_field(name="Edited Content:", value=f"```\n{edited_message.content.replace('`', '')}\n```", inline=False)
 		_embed.add_field(name="User:", value=f"{original_message.author.name}#{original_message.author.discriminator}(`{original_message.author.id}`)", inline=False)
-		_embed.add_field(name="Time:", value=f"{discord.Timestamp.now()}", inline=False)
 		_embed.set_footer(text="Security Bot", icon_url=self.bot.user.display_avatar)
 		await log.send(embed=_embed)
 
@@ -144,7 +140,6 @@ class Events(commands.Cog):
 		_embed.add_field(name="Invite Code:", value=f"`{invite.code}`", inline=False)
 		_embed.add_field(name="Invite Channel:", value=f"<#{invite.channel.id}>", inline=False)
 		_embed.add_field(name="User:", value=f"{invite.inviter.name}#{invite.inviter.discriminator}(`{invite.inviter.id}`)", inline=False)
-		_embed.add_field(name="Time:", value=f"{discord.Timestamp.now()}", inline=False)
 		_embed.set_footer(text="Security Bot", icon_url=self.bot.user.display_avatar)
 		await invite.delete(reason="AUTO-DELETE-PROTECTION-RULE")
 		await log.send(embed=_embed)

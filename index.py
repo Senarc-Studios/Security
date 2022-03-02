@@ -74,7 +74,7 @@ bot = Security()
 
 @bot.event
 async def on_ready():
-	embed_dict = build_embed("Bot Ready", "Security Bot Events", f"Bot has started at {discord.Timestamp.now()}.")
+	embed_dict = build_embed("Bot Ready", "Security Bot Events", f"Bot has started.")
 	if await log_event(embed_dict, bot=bot) == True:
 		output("Bot Started.")
 	else:
