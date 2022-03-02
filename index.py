@@ -92,7 +92,7 @@ async def alive(ctx):
 			output("An error occurred, Unable to log error.")
 		await ctx.send(f":warning: An error has occurred while sending Ephemeral Message:\n\n```py\n{error}\n```")
 
-@bot.command(brief="Registers a user for authorising.", message_command=False)
+@bot.command(brief="Registers a user for authorising.")
 async def register(ctx, type: str, id: str):
 	if owner(ctx.author) == False:
 		return await ctx.send(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
