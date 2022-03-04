@@ -10,7 +10,12 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
 def env(variable: str):
-	return os.getenv(f"{variable}")
+	env = os.getenv(variable)
+	if env == None:
+		Terminal.error(f"Environmental variable \"{variable}\" not found.")
+		return None
+	else:
+		return env
 
 async def log_event(
 	json = None,
@@ -102,6 +107,9 @@ async def register(ctx, type: str, user_id: str):
 	elif type.lower() == "privileged":
 		cool_utils.JSON.register_value(user_id, 'privileged')
 		await ctx.send(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral=True)
+	elif type.lower() == "developer":
+		cool_utils.JSON.register_value(user_id, 'developer')
+		await ctx.send(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral=True)
 	else:
 		await ctx.send(f":no_entry_sign: Invalid type!", ephemeral=True)
 
@@ -113,7 +121,7 @@ async def unregister(ctx, user_id: str):
 		return await ctx.send(f":ballot_box_with_check: Unregistered id `{user_id}`.")
 	else:
 		cool_utils.JSON.register_value(user_id, None)
-		await ctx.send(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral=True)
+		await ctx.send(f":ballot_box_with_check: Unregistered id `{user_id}` from being `{type}`.", ephemeral=True)
 
 @bot.command(brief="Reloads a cog.", message_command=False)
 async def reload(ctx, extension: str):

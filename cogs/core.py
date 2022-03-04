@@ -1,10 +1,19 @@
 import os
 import sys
 import discord
+
+from cool_utils import Terminal
 from discord.ext import commands
+from dotenv import load_dotenv, find_dotenv
 
 def env(variable: str):
-	return os.getenv(f"{variable}")
+	load_dotenv(find_dotenv())
+	env = os.getenv(variable)
+	if env == None:
+		Terminal.error(f"Environmental variable \"{variable}\" not found.")
+		return None
+	else:
+		return env
 
 def owner(author):
 	if int(author.id) == int(env("OWNER")):

@@ -11,7 +11,12 @@ def output(content):
 
 def env(variable: str):
 	load_dotenv(find_dotenv())
-	return os.getenv(variable)
+	env = os.getenv(variable)
+	if env == None:
+		Terminal.error(f"Environmental variable \"{variable}\" not found.")
+		return None
+	else:
+		return env
 
 class Events(commands.Cog):
 	def __init__(self, bot):
@@ -42,7 +47,19 @@ class Events(commands.Cog):
 				output(f"Privileged User \"{member.name}\" joined.")
 			except:
 				action = "Authorised as privileged"
-				code = "ERAG"
+				code = "ERAP"
+				output(f"Privileged User \"{member.name}\" joined, Unable to give role.")
+
+		elif cool_utils.JSON.get_data(f"{member.id}") == "developer":
+			try:
+				role = discord.utils.get(member.guild.roles, id=int(env("DEVELOPER_ROLE")))
+				await member.add_roles(role, reason="User registered as developer")
+				action = "Authorised as developer"
+				code = "01AD"
+				output(f"Privileged User \"{member.name}\" joined.")
+			except:
+				action = "Authorised as developer"
+				code = "ERAD"
 				output(f"Privileged User \"{member.name}\" joined, Unable to give role.")
 
 		else:

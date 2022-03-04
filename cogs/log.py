@@ -11,7 +11,12 @@ def output(content):
 
 def env(variable: str):
 	load_dotenv(find_dotenv())
-	return os.getenv(variable)
+	env = os.getenv(variable)
+	if env == None:
+		Terminal.error(f"Environmental variable \"{variable}\" not found.")
+		return None
+	else:
+		return env
 
 class Log(commands.Cog):
 	def __init__(self, bot):
