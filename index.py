@@ -93,8 +93,7 @@ async def alive(ctx):
 		await ctx.send(f":warning: An error has occurred while sending Ephemeral Message:\n\n```py\n{error}\n```")
 
 @bot.command(brief="Registers a user for authorising.", message_command=False)
-async def register(ctx, type, user_id):
-	user_id = int(user_id)
+async def register(ctx, type: str, user_id: str):
 	if owner(ctx.author) == False:
 		return await ctx.send(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
 	if type.lower() == "guest":
@@ -107,8 +106,7 @@ async def register(ctx, type, user_id):
 		await ctx.send(f":no_entry_sign: Invalid type!", ephemeral=True)
 
 @bot.command(brief="Unregisters a user from authorising.", message_command=False)
-async def unregister(ctx, user_id):
-	user_id = int(user_id)
+async def unregister(ctx, user_id: str):
 	if owner(ctx.author) == False:
 		return await ctx.send(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
 	if cool_utils.JSON.get_data(user_id) != "guest" and cool_utils.JSON.get_data(user_id) != "privileged":
