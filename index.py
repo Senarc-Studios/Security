@@ -92,36 +92,36 @@ async def alive(ctx):
 			output("An error occurred, Unable to log error.")
 		await ctx.send(f":warning: An error has occurred while sending Ephemeral Message:\n\n```py\n{error}\n```")
 
-@bot.command(brief="Registers a user for authorising.")
-async def register(ctx, type: str, id: str):
+@bot.command(brief="Registers a user for authorising.", message_command=False)
+async def register(ctx, type: str, user_id: str):
 	if owner(ctx.author) == False:
 		return await ctx.send(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
 	try:
-		id = int(id)
+		_id = int(user_id)
 	except:
 		return await ctx.send(f":no_entry_sign: Invalid User ID.")
 	if type.lower() == "guest":
-		cool_utils.JSON.register_value(id, 'guests')
-		await ctx.send(f":ballot_box_with_check: Registered id `{id}` as `{type}`.", ephemeral=True)
+		cool_utils.JSON.register_value(_id, 'guests')
+		await ctx.send(f":ballot_box_with_check: Registered id `{_id}` as `{type}`.", ephemeral=True)
 	elif type.lower() == "privileged":
-		cool_utils.JSON.register_value(id, 'privileged')
-		await ctx.send(f":ballot_box_with_check: Registered id `{id}` as `{type}`.", ephemeral=True)
+		cool_utils.JSON.register_value(_id, 'privileged')
+		await ctx.send(f":ballot_box_with_check: Registered id `{_id}` as `{type}`.", ephemeral=True)
 	else:
 		await ctx.send(f":no_entry_sign: Invalid type!", ephemeral=True)
 
 @bot.command(brief="Unregisters a user from authorising.", message_command=False)
-async def unregister(ctx, id: str):
+async def unregister(ctx, user_id: str):
 	if owner(ctx.author) == False:
 		return await ctx.send(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
 	try:
-		id = int(id)
+		_id = int(user_id)
 	except:
 		return await ctx.send(f":no_entry_sign: Invalid User ID.")
-	if cool_utils.JSON.get_data(id) != "guest" and cool_utils.JSON.get_data(id) != "privileged":
-		return await ctx.send(f":ballot_box_with_check: Unregistered id `{id}`.")
+	if cool_utils.JSON.get_data(_id) != "guest" and cool_utils.JSON.get_data(_id) != "privileged":
+		return await ctx.send(f":ballot_box_with_check: Unregistered id `{_id}`.")
 	else:
-		cool_utils.JSON.register_value(id, None)
-		await ctx.send(f":ballot_box_with_check: Registered id `{id}` as `{type}`.", ephemeral=True)
+		cool_utils.JSON.register_value(_id, None)
+		await ctx.send(f":ballot_box_with_check: Registered id `{_id}` as `{type}`.", ephemeral=True)
 
 @bot.command(brief="Reloads a cog.", message_command=False)
 async def reload(ctx, extension: str):
