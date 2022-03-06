@@ -1,2 +1,2 @@
 cool-utils
-enhanced-dpy
+git+https://github.com/Rapptz/discord.py.git
