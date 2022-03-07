@@ -28,7 +28,7 @@
 # 	def __init__(self, bot):
 # 		self.bot = bot
 	
-# 	@tree.command(id=CORE_GUILD, description="Shuts down the bot.")
+# 	@tree.command(guild=CORE_GUILD, description="Shuts down the bot.")
 # 	async def shutdown(self, inter: discord.Interaction):
 # 		if owner(author(inter)) == False:
 # 			return await respond(inter, f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
