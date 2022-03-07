@@ -21,6 +21,8 @@ def get_loaded_extensions():
 		choices = []
 		class_ = Choice(name=extension, value=extension)
 		choices.append(class_)
+	if len(LOADED_EXTENSIONS) == 0:
+		return [Choice(name="No Extensions", value="No Extensions")]
 	return choices
 
 def get_unloaded_extensions():
@@ -28,6 +30,8 @@ def get_unloaded_extensions():
 		choices = []
 		class_ = Choice(name=extension, value=extension)
 		choices.append(class_)
+	if len(UNLOADED_EXTENSIONS) == 0:
+		return [Choice(name="No Extensions", value="No Extensions")]
 	return choices
 
 def env(variable: str):
