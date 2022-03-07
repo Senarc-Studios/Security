@@ -105,7 +105,7 @@ class Security(commands.Bot):
 		await super().close()
 
 bot = Security()
-tree = app_commands.commandTree(bot)
+tree = app_commands.CommandTree(bot)
 
 @bot.event
 async def on_ready():
