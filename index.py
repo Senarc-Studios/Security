@@ -85,6 +85,7 @@ class Security(commands.Bot):
 			message_commands=True,
 			case_insensitive=True
 		)
+		self.already_running = False
 
 	async def start(self, *args, **kwargs):
 		cool_utils.JSON.open('config')
@@ -98,7 +99,6 @@ class Security(commands.Bot):
 
 bot = Security()
 command_tree = app_commands.CommandTree(bot)
-is_running = []
 
 @bot.event
 async def on_ready():
@@ -107,11 +107,11 @@ async def on_ready():
 		output("Bot Started.")
 	else:
 		output("Bot Started, Unable to log event.")
-	if is_running == []:
+	if not bot.already_running:
 		command_tree.sync()
 	else:
 		return
-	is_running.append(True)
+	bot.already_running = True
 
 @app_commands.command(brief="Checks if the bot is alive.")
 async def alive(interaction):
