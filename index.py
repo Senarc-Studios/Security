@@ -117,7 +117,7 @@ async def on_ready():
 	else:
 		output("Bot Started, Unable to log event.")
 	if not bot.already_running:
-		await tree.sync()
+		await tree.sync(guild=CORE_GUILD)
 	else:
 		return
 	bot.already_running = True
@@ -261,7 +261,7 @@ async def pull(interaction):
 	try:
 		os.system("git pull")
 		await respond(f":ballot_box_with_check: `$ git pull` executed with success.", ephemeral=True)
-		await tree.sync()
+		await tree.sync(guild=CORE_GUILD)
 	except Exception as error:
 		return await respond(f":warning: An error occurred while pulling github updates.\n\n```py\n{error}\n```", ephemeral=True)
 
