@@ -98,7 +98,7 @@ class Security(commands.Bot):
 
 bot = Security()
 command_tree = app_commands.CommandTree(bot)
-is_running = False
+is_running = []
 
 @bot.event
 async def on_ready():
@@ -107,6 +107,11 @@ async def on_ready():
 		output("Bot Started.")
 	else:
 		output("Bot Started, Unable to log event.")
+	if is_running == []:
+		command_tree.sync()
+	else:
+		return
+	is_running.append(True)
 
 @app_commands.command(brief="Checks if the bot is alive.")
 async def alive(interaction):
