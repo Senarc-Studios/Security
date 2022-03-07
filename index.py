@@ -102,7 +102,7 @@ class Security(commands.Bot):
 		await super().close()
 
 bot = Security()
-command_tree = app_commands.CommandTree(bot)
+tree = app_commands.commandTree(bot)
 
 @bot.event
 async def on_ready():
@@ -112,12 +112,19 @@ async def on_ready():
 	else:
 		output("Bot Started, Unable to log event.")
 	if not bot.already_running:
-		await command_tree.sync()
+		await tree.sync()
 	else:
 		return
 	bot.already_running = True
 
-@app_commands.command(description="Checks if the bot is alive.")
+@tree.command(id=CORE_GUILD, description="Shuts down the bot.")
+async def shutdown(interaction: discord.Interaction):
+	if owner(author(interaction)) == False:
+		return await respond(interaction, f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
+	await respond(interaction, f":ballot_box_with_check: Bot Shutting Down...", ephemeral=True)
+	sys.exit()
+
+@tree.command(id=CORE_GUILD, description="Checks if the bot is alive.")
 async def alive(interaction):
 	respond = interaction.response.send_message
 
