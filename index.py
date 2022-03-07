@@ -128,8 +128,8 @@ async def alive(interaction):
 		await respond(f":warning: An error has occurred while sending Ephemeral Message:\n\n```py\n{error}\n```")
 
 @app_commands.command(description="Registers a user for authorising.")
-@app_commands.describ(type="User role type.")
-@app_commands.describ(user_id="User's Discord ID.")
+@app_commands.describe(type="User role type.")
+@app_commands.describe(user_id="User's Discord ID.")
 async def register(interaction, type: str, user_id: str):
 	respond = interaction.response.send_message
 	author = interaction.user
@@ -149,7 +149,7 @@ async def register(interaction, type: str, user_id: str):
 		await respond(f":no_entry_sign: Invalid type!", ephemeral=True)
 
 @app_commands.command(description="Unregisters a user from authorising.")
-@app_commands.describ(user_id="Registered Discord User ID.")
+@app_commands.describe(user_id="Registered Discord User ID.")
 async def unregister(interaction, user_id: str):
 	respond = interaction.response.send_message
 	author = interaction.user
@@ -163,7 +163,7 @@ async def unregister(interaction, user_id: str):
 		await respond(f":ballot_box_with_check: Unregistered id `{user_id}` from being `{type}`.", ephemeral=True)
 
 @app_commands.command(description="Reloads a cog.")
-@app_commands.describ(extension="Cog extension that needs to be reloaded.")
+@app_commands.describe(extension="Cog extension that needs to be reloaded.")
 @app_commands.choices(extension=get_loaded_extensions())
 async def reload(interaction, extension: str):
 	respond = interaction.response.send_message
@@ -185,7 +185,7 @@ async def reload(interaction, extension: str):
 		await respond(f":warning: An error occurred while reloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
 
 @app_commands.command(description="Unloads a cog.")
-@app_commands.describ(extension="Cog extension that needs to be unloaded.")
+@app_commands.describe(extension="Cog extension that needs to be unloaded.")
 @app_commands.choices(extension=get_loaded_extensions())
 async def unload(interaction, extension: str):
 	respond = interaction.response.send_message
@@ -204,7 +204,7 @@ async def unload(interaction, extension: str):
 		await respond(f":warning: An error occurred while unloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
 
 @app_commands.command(description="Loads a cog.")
-@app_commands.describ(extension="Cog extension that needs to be loaded.")
+@app_commands.describe(extension="Cog extension that needs to be loaded.")
 @app_commands.choices(extension=get_unloaded_extensions())
 async def load(interaction, extension: str):
 	respond = interaction.response.send_message
