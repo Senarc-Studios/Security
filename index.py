@@ -112,7 +112,7 @@ async def on_ready():
 	else:
 		output("Bot Started, Unable to log event.")
 	if not bot.already_running:
-		command_tree.sync()
+		await command_tree.sync()
 	else:
 		return
 	bot.already_running = True
