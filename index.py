@@ -4,6 +4,7 @@ import asyncio
 import discord
 import cool_utils
 
+from typing import Literal
 from cool_utils import Terminal
 from dotenv import load_dotenv, find_dotenv
 
@@ -145,7 +146,7 @@ async def alive(interaction):
 @tree.command(guild=CORE_GUILD, description="Registers a user for authorising.")
 @app_commands.describe(type="User role type.")
 @app_commands.describe(user_id="User's Discord ID.")
-async def register(interaction, type: str, user_id: str):
+async def register(interaction, type: Literal["guest", "developer", "privileged"], user_id: str):
 	respond = interaction.response.send_message
 	author = interaction.user
 
@@ -180,7 +181,7 @@ async def unregister(interaction, user_id: str):
 @tree.command(guild=CORE_GUILD, description="Reloads a cog.")
 @app_commands.describe(extension="Cog extension that needs to be reloaded.")
 @app_commands.choices(extension=get_loaded_extensions())
-async def reload(interaction, extension: str):
+async def reload(interaction, extension: Choice[str]):
 	respond = interaction.response.send_message
 	author = interaction.user
 
@@ -202,7 +203,7 @@ async def reload(interaction, extension: str):
 @tree.command(guild=CORE_GUILD, description="Unloads a cog.")
 @app_commands.describe(extension="Cog extension that needs to be unloaded.")
 @app_commands.choices(extension=get_loaded_extensions())
-async def unload(interaction, extension: str):
+async def unload(interaction, extension: Choice[str]):
 	respond = interaction.response.send_message
 	author = interaction.user
 
@@ -221,7 +222,7 @@ async def unload(interaction, extension: str):
 @tree.command(guild=CORE_GUILD, description="Loads a cog.")
 @app_commands.describe(extension="Cog extension that needs to be loaded.")
 @app_commands.choices(extension=get_unloaded_extensions())
-async def load(interaction, extension: str):
+async def load(interaction, extension: Choice[str]):
 	respond = interaction.response.send_message
 	author = interaction.user
 
@@ -260,7 +261,7 @@ async def pull(interaction):
 	try:
 		os.system("git pull")
 		await respond(f":ballot_box_with_check: `$ git pull` executed with success.", ephemeral=True)
-		command_tree.sync()
+		await tree.sync()
 	except Exception as error:
 		return await respond(f":warning: An error occurred while pulling github updates.\n\n```py\n{error}\n```", ephemeral=True)
 
