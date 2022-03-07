@@ -2,8 +2,8 @@ import os
 import sys
 import discord
 
-from utils.shortcode import respond
 from cool_utils import Terminal
+from utils.shortcode import respond, author
 from dotenv import load_dotenv, find_dotenv
 
 from discord import app_commands

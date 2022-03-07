@@ -8,8 +8,27 @@ from dotenv import load_dotenv, find_dotenv
 
 from discord import app_commands
 from discord.ext import commands
+from discord.app_commands import Choice
+
+TOTAL_EXTENSIONS = []
+LOADED_EXTENSIONS = []
+UNLOADED_EXTENSIONS = [] 
 
 load_dotenv(find_dotenv())
+
+def get_loaded_extensions():
+	for extension in LOADED_EXTENSIONS:
+		choices = []
+		class_ = Choice(name=extension, value=extension)
+		choices.append(class_)
+	return choices
+
+def get_unloaded_extensions():
+	for extension in UNLOADED_EXTENSIONS:
+		choices = []
+		class_ = Choice(name=extension, value=extension)
+		choices.append(class_)
+	return choices
 
 def env(variable: str):
 	env = os.getenv(variable)
@@ -79,6 +98,7 @@ class Security(commands.Bot):
 
 bot = Security()
 command_tree = app_commands.CommandTree(bot)
+is_running = False
 
 @bot.event
 async def on_ready():
@@ -139,6 +159,7 @@ async def unregister(interaction, user_id: str):
 
 @app_commands.command(brief="Reloads a cog.")
 @app_commands.describ(extension="Cog extension that needs to be reloaded.")
+@app_commands.choices(extension=get_loaded_extensions())
 async def reload(interaction, extension: str):
 	respond = interaction.response.send_message
 	author = interaction.user
@@ -146,12 +167,55 @@ async def reload(interaction, extension: str):
 	if owner(author) == False:
 		return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
 	try:
-		bot.reload_extension(f"cogs.{extension}")
+		bot.unload_extension(f"cogs.{extension}")
+		LOADED_EXTENSIONS.remove(extension)
+		UNLOADED_EXTENSIONS.append(extension)
+		bot.load_extension(f"cogs.{extension}")
+		UNLOADED_EXTENSIONS.remove(extension)
+		LOADED_EXTENSIONS.append(extension)
 		output(f"Reloaded Cog \"{extension}\"")
 		await respond(f":ballot_box_with_check: **`cogs.{extension}` reloaded.**", ephemeral=True)
 	except Exception as error:
 		output(f"An error occurred while reloading \"{extension}\" cog.")
 		await respond(f":warning: An error occurred while reloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
+
+@app_commands.command(brief="Unloads a cog.")
+@app_commands.describ(extension="Cog extension that needs to be unloaded.")
+@app_commands.choices(extension=get_loaded_extensions())
+async def unload(interaction, extension: str):
+	respond = interaction.response.send_message
+	author = interaction.user
+
+	if owner(author) == False:
+		return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
+	try:
+		bot.unload_extension(f"cogs.{extension}")
+		LOADED_EXTENSIONS.remove(extension)
+		UNLOADED_EXTENSIONS.append(extension)
+		output(f"Unloaded Cog \"{extension}\"")
+		await respond(f":ballot_box_with_check: **`cogs.{extension}` unloaded.**", ephemeral=True)
+	except Exception as error:
+		output(f"An error occurred while unloading \"{extension}\" cog.")
+		await respond(f":warning: An error occurred while unloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
+
+@app_commands.command(brief="Loads a cog.")
+@app_commands.describ(extension="Cog extension that needs to be loaded.")
+@app_commands.choices(extension=get_unloaded_extensions())
+async def load(interaction, extension: str):
+	respond = interaction.response.send_message
+	author = interaction.user
+
+	if owner(author) == False:
+		return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
+	try:
+		bot.load_extension(f"cogs.{extension}")
+		UNLOADED_EXTENSIONS.remove(extension)
+		LOADED_EXTENSIONS.append(extension)
+		output(f"Reloaded Cog \"{extension}\"")
+		await respond(f":ballot_box_with_check: **`cogs.{extension}` loaded.**", ephemeral=True)
+	except Exception as error:
+		output(f"An error occurred while loading \"{extension}\" cog.")
+		await respond(f":warning: An error occurred while loading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
 
 @app_commands.command(brief="Fetches updates from github and restarts the bot.")
 async def fetch(interaction):
@@ -184,10 +248,13 @@ def main():
 	for file in os.listdir("./cogs"):
 		if file.endswith(".py"):
 			name = file[:-3]
+			TOTAL_EXTENSIONS.append(file[:-3])
 			try:
 				bot.load_extension(f"cogs.{name}")
+				LOADED_EXTENSIONS.append(name)
 				output(f"\"{name}\" Cog Loaded.")
 			except Exception as error:
+				UNLOADED_EXTENSIONS.append(name)
 				output(f"An error occurred while loading \"{name}\" cog.")
 	bot.run(env("TOKEN"))
 
