@@ -1,2 +1,2 @@
-cool-utils
+git+https://github.com/Senarc-Studios/Cool-Utils.git
 git+https://github.com/Rapptz/discord.py.git
