@@ -12,7 +12,7 @@ from discord import app_commands
 from discord.ext import commands
 from discord.app_commands import Choice
 
-from utils.shortcode import respond, author
+from utils.globals import respond, author
 
 TOTAL_EXTENSIONS = []
 LOADED_EXTENSIONS = []
@@ -85,6 +85,11 @@ def owner(author):
 intents = discord.Intents.all()
 intents.members = True
 
+async def sync_application(self):
+	await self.wait_until_ready()
+	await self.tree.sync()
+	Terminal.display("Application synced successfully.")
+
 class Security(commands.Bot):
 	def __init__(self):
 		super().__init__(
@@ -106,8 +111,17 @@ class Security(commands.Bot):
 		Terminal.stop_log()
 		await super().close()
 
+	async def setup_hook(self):
+		self.loop.create_task(sync_application(self))
+
+		for filename in os.listdir("./cogs"):
+			if filename.endswith(".py"):
+				try:
+					await bot.load_extension(f"cogs.{filename[:-3]}")
+				except commands.errors.ExtensionError as error:
+					Terminal.error(error)
+
 bot = Security()
-tree = app_commands.CommandTree(bot)
 
 @bot.event
 async def on_ready():
@@ -116,11 +130,6 @@ async def on_ready():
 		output("Bot Started.")
 	else:
 		output("Bot Started, Unable to log event.")
-	if not bot.already_running:
-		await tree.sync(guild=CORE_GUILD)
-	else:
-		return
-	bot.already_running = True
 
 @tree.command(guild=CORE_GUILD, description="Shuts down the bot.")
 async def shutdown(interaction: discord.Interaction):
