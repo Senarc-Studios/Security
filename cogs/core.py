@@ -1,39 +1,45 @@
-# import os
-# import sys
-# import discord
+import sys
+import discord
 
-# from cool_utils import Terminal
-# from utils.shortcode import respond, author
-# from dotenv import load_dotenv, find_dotenv
+from discord import app_commands
+from discord.ext import commands
 
-# from discord import app_commands
-# from discord.ext import commands
+from typing import Choice
 
-# def env(variable: str):
-# 	load_dotenv(find_dotenv())
-# 	env = os.getenv(variable)
-# 	if env == None:
-# 		Terminal.error(f"Environmental variable \"{variable}\" not found.")
-# 		return None
-# 	else:
-# 		return env
+from utils.globals import respond, author, owner, output
 
-# def owner(author):
-# 	if int(author.id) == int(env("OWNER")):
-# 		return True
-# 	else:
-# 		return False
+class Core(commands.Cog):
+	def __init__(self, bot):
+		self.bot = bot
 
-# class Core(commands.Cog):
-# 	def __init__(self, bot):
-# 		self.bot = bot
-	
-# 	@tree.command(guild=CORE_GUILD, description="Shuts down the bot.")
-# 	async def shutdown(self, inter: discord.Interaction):
-# 		if owner(author(inter)) == False:
-# 			return await respond(inter, f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
-# 		await respond(inter, f":ballot_box_with_check: Bot Shutting Down...", ephemeral=True)
-# 		sys.exit()
+	@app_commands.command(description="Reloads a cog.")
+	@app_commands.describe(extension="Cog extension that needs to be reloaded.")
+	@app_commands.choices(extension=get_loaded_extensions())
+	async def reload(self, interaction, extension: Choice[str]):
+		respond = interaction.response.send_message
+		author = interaction.user
 
-# def setup(bot):
-# 	bot.add_cog(Core(bot))
+		if owner(author) == False:
+			return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
+		try:
+			self.bot.unload_extension(f"cogs.{extension}")
+			LOADED_EXTENSIONS.remove(extension)
+			UNLOADED_EXTENSIONS.append(extension)
+			bot.load_extension(f"cogs.{extension}")
+			UNLOADED_EXTENSIONS.remove(extension)
+			LOADED_EXTENSIONS.append(extension)
+			output(f"Reloaded Cog \"{extension}\"")
+			await respond(f":ballot_box_with_check: **`cogs.{extension}` reloaded.**", ephemeral=True)
+		except Exception as error:
+			output(f"An error occurred while reloading \"{extension}\" cog.")
+			await respond(f":warning: An error occurred while reloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
+
+	@app_commands.command(description="Shuts down the bot.")
+	async def shutdown(self, interaction: discord.Interaction):
+		if owner(author(interaction)) == False:
+			return await respond(interaction, f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
+		await respond(interaction, f":ballot_box_with_check: Bot Shutting Down...", ephemeral=True)
+		sys.exit()
+
+async def setup(bot):
+	bot.add_cog(Core(bot))
