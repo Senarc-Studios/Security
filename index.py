@@ -131,14 +131,14 @@ async def on_ready():
 	else:
 		output("Bot Started, Unable to log event.")
 
-@tree.command(guild=CORE_GUILD, description="Shuts down the bot.")
+@bot.tree.command(guild=CORE_GUILD, description="Shuts down the bot.")
 async def shutdown(interaction: discord.Interaction):
 	if owner(author(interaction)) == False:
 		return await respond(interaction, f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
 	await respond(interaction, f":ballot_box_with_check: Bot Shutting Down...", ephemeral=True)
 	sys.exit()
 
-@tree.command(guild=CORE_GUILD, description="Checks if the bot is alive.")
+@bot.tree.command(guild=CORE_GUILD, description="Checks if the bot is alive.")
 async def alive(interaction):
 	respond = interaction.response.send_message
 
@@ -152,7 +152,7 @@ async def alive(interaction):
 			output("An error occurred, Unable to log error.")
 		await respond(f":warning: An error has occurred while sending Ephemeral Message:\n\n```py\n{error}\n```")
 
-@tree.command(guild=CORE_GUILD, description="Registers a user for authorising.")
+@bot.tree.command(guild=CORE_GUILD, description="Registers a user for authorising.")
 @app_commands.describe(type="User role type.")
 @app_commands.describe(user_id="User's Discord ID.")
 async def register(interaction, type: Literal["guest", "developer", "privileged"], user_id: str):
@@ -173,7 +173,7 @@ async def register(interaction, type: Literal["guest", "developer", "privileged"
 	else:
 		await respond(f":no_entry_sign: Invalid type!", ephemeral=True)
 
-@tree.command(guild=CORE_GUILD, description="Unregisters a user from authorising.")
+@bot.tree.command(guild=CORE_GUILD, description="Unregisters a user from authorising.")
 @app_commands.describe(user_id="Registered Discord User ID.")
 async def unregister(interaction, user_id: str):
 	respond = interaction.response.send_message
@@ -187,7 +187,7 @@ async def unregister(interaction, user_id: str):
 		cool_utils.JSON.register_value(user_id, None)
 		await respond(f":ballot_box_with_check: Unregistered id `{user_id}` from being `{type}`.", ephemeral=True)
 
-@tree.command(guild=CORE_GUILD, description="Reloads a cog.")
+@bot.tree.command(guild=CORE_GUILD, description="Reloads a cog.")
 @app_commands.describe(extension="Cog extension that needs to be reloaded.")
 @app_commands.choices(extension=get_loaded_extensions())
 async def reload(interaction, extension: Choice[str]):
@@ -209,7 +209,7 @@ async def reload(interaction, extension: Choice[str]):
 		output(f"An error occurred while reloading \"{extension}\" cog.")
 		await respond(f":warning: An error occurred while reloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
 
-@tree.command(guild=CORE_GUILD, description="Unloads a cog.")
+@bot.tree.command(guild=CORE_GUILD, description="Unloads a cog.")
 @app_commands.describe(extension="Cog extension that needs to be unloaded.")
 @app_commands.choices(extension=get_loaded_extensions())
 async def unload(interaction, extension: Choice[str]):
@@ -228,7 +228,7 @@ async def unload(interaction, extension: Choice[str]):
 		output(f"An error occurred while unloading \"{extension}\" cog.")
 		await respond(f":warning: An error occurred while unloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
 
-@tree.command(guild=CORE_GUILD, description="Loads a cog.")
+@bot.tree.command(guild=CORE_GUILD, description="Loads a cog.")
 @app_commands.describe(extension="Cog extension that needs to be loaded.")
 @app_commands.choices(extension=get_unloaded_extensions())
 async def load(interaction, extension: Choice[str]):
@@ -247,7 +247,7 @@ async def load(interaction, extension: Choice[str]):
 		output(f"An error occurred while loading \"{extension}\" cog.")
 		await respond(f":warning: An error occurred while loading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
 
-@tree.command(guild=CORE_GUILD, description="Fetches updates from github and restarts the bot.")
+@bot.tree.command(guild=CORE_GUILD, description="Fetches updates from github and restarts the bot.")
 async def fetch(interaction):
 	respond = interaction.response.send_message
 	author = interaction.user
@@ -262,7 +262,7 @@ async def fetch(interaction):
 	except Exception as error:
 		await respond(f":warning: An error occurred while fetching updates and restarting.\n\n```py\n{error}\n```", ephemeral=True)
 
-@tree.command(guild=CORE_GUILD, description="Pulls updates from Github")
+@bot.tree.command(guild=CORE_GUILD, description="Pulls updates from Github")
 async def pull(interaction):
 	respond = interaction.response.send_message
 	if owner(interaction.user) == False:
@@ -270,7 +270,7 @@ async def pull(interaction):
 	try:
 		os.system("git pull")
 		await respond(f":ballot_box_with_check: `$ git pull` executed with success.", ephemeral=True)
-		await tree.sync(guild=CORE_GUILD)
+		await bot.tree.sync(guild=CORE_GUILD)
 	except Exception as error:
 		return await respond(f":warning: An error occurred while pulling github updates.\n\n```py\n{error}\n```", ephemeral=True)
 
