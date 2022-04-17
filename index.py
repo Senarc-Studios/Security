@@ -5,38 +5,10 @@ import discord
 import cool_utils
 
 from cool_utils import Terminal
+from discord.ext import commands
 from dotenv import load_dotenv, find_dotenv
 
-from discord import app_commands
-from discord.ext import commands
-from discord.app_commands import Choice
-
-from utils.shortcode import respond, author
-
-TOTAL_EXTENSIONS = []
-LOADED_EXTENSIONS = []
-UNLOADED_EXTENSIONS = [] 
-CORE_GUILD = discord.Object(id=902431960218075246)
-
 load_dotenv(find_dotenv())
-
-def get_loaded_extensions():
-	for extension in LOADED_EXTENSIONS:
-		choices = []
-		class_ = Choice(name=extension, value=extension)
-		choices.append(class_)
-	if len(LOADED_EXTENSIONS) == 0:
-		return [Choice(name="No Extensions", value="No Extensions")]
-	return choices
-
-def get_unloaded_extensions():
-	for extension in UNLOADED_EXTENSIONS:
-		choices = []
-		class_ = Choice(name=extension, value=extension)
-		choices.append(class_)
-	if len(UNLOADED_EXTENSIONS) == 0:
-		return [Choice(name="No Extensions", value="No Extensions")]
-	return choices
 
 def env(variable: str):
 	env = os.getenv(variable)
@@ -93,7 +65,6 @@ class Security(commands.Bot):
 			message_commands=True,
 			case_insensitive=True
 		)
-		self.already_running = False
 
 	async def start(self, *args, **kwargs):
 		cool_utils.JSON.open('config')
@@ -106,7 +77,6 @@ class Security(commands.Bot):
 		await super().close()
 
 bot = Security()
-tree = app_commands.CommandTree(bot)
 
 @bot.event
 async def on_ready():
@@ -115,166 +85,87 @@ async def on_ready():
 		output("Bot Started.")
 	else:
 		output("Bot Started, Unable to log event.")
-	if not bot.already_running:
-		await tree.sync()
-	else:
-		return
-	bot.already_running = True
 
-@tree.command(guild=CORE_GUILD, description="Shuts down the bot.")
-async def shutdown(interaction: discord.Interaction):
-	if owner(author(interaction)) == False:
-		return await respond(interaction, f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
-	await respond(interaction, f":ballot_box_with_check: Bot Shutting Down...", ephemeral=True)
-	sys.exit()
-
-@tree.command(guild=CORE_GUILD, description="Checks if the bot is alive.")
-async def alive(interaction):
-	respond = interaction.response.send_message
-
+@bot.command(brief="Checks if the bot is alive.", aliases = ["ca", "test", "check-alive"])
+async def alive(ctx):
 	try:
-		await respond(f":ballot_box_with_check: Security bot is alive!", ephemeral=True)
+		await ctx.send(f":ballot_box_with_check: Security bot is alive!", ephemeral=True)
 	except Exception as error:
 		embed_dict = ("ERROR", "Security Bot Errors", f"```py\n{error}\n```")
 		if await log_event(embed_dict, bot=bot) == True:
 			output("An error occurred, Successfully logged error.")
 		else:
 			output("An error occurred, Unable to log error.")
-		await respond(f":warning: An error has occurred while sending Ephemeral Message:\n\n```py\n{error}\n```")
+		await ctx.send(f":warning: An error has occurred while sending Ephemeral Message:\n\n```py\n{error}\n```")
 
-@tree.command(guild=CORE_GUILD, description="Registers a user for authorising.")
-@app_commands.describe(type="User role type.")
-@app_commands.describe(user_id="User's Discord ID.")
-async def register(interaction, type: str, user_id: str):
-	respond = interaction.response.send_message
-	author = interaction.user
-
-	if owner(author) == False:
-		return await respond(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
+@bot.command(brief="Registers a user for authorising.", message_command=False)
+async def register(ctx, type: str, user_id: str):
+	if owner(ctx.author) == False:
+		return await ctx.send(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
 	if type.lower() == "guest":
 		cool_utils.JSON.register_value(user_id, 'guests')
-		await respond(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral=True)
+		await ctx.send(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral=True)
 	elif type.lower() == "privileged":
 		cool_utils.JSON.register_value(user_id, 'privileged')
-		await respond(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral=True)
+		await ctx.send(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral=True)
 	elif type.lower() == "developer":
 		cool_utils.JSON.register_value(user_id, 'developer')
-		await respond(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral=True)
+		await ctx.send(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral=True)
 	else:
-		await respond(f":no_entry_sign: Invalid type!", ephemeral=True)
+		await ctx.send(f":no_entry_sign: Invalid type!", ephemeral=True)
 
-@tree.command(guild=CORE_GUILD, description="Unregisters a user from authorising.")
-@app_commands.describe(user_id="Registered Discord User ID.")
-async def unregister(interaction, user_id: str):
-	respond = interaction.response.send_message
-	author = interaction.user
-
-	if owner(author) == False:
-		return await respond(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
+@bot.command(brief="Unregisters a user from authorising.", message_command=False)
+async def unregister(ctx, user_id: str):
+	if owner(ctx.author) == False:
+		return await ctx.send(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
 	if cool_utils.JSON.get_data(user_id) != "guest" and cool_utils.JSON.get_data(user_id) != "privileged":
-		return await respond(f":ballot_box_with_check: Unregistered id `{user_id}`.")
+		return await ctx.send(f":ballot_box_with_check: Unregistered id `{user_id}`.")
 	else:
 		cool_utils.JSON.register_value(user_id, None)
-		await respond(f":ballot_box_with_check: Unregistered id `{user_id}` from being `{type}`.", ephemeral=True)
+		await ctx.send(f":ballot_box_with_check: Unregistered id `{user_id}` from being `{type}`.", ephemeral=True)
 
-@tree.command(guild=CORE_GUILD, description="Reloads a cog.")
-@app_commands.describe(extension="Cog extension that needs to be reloaded.")
-@app_commands.choices(extension=get_loaded_extensions())
-async def reload(interaction, extension: str):
-	respond = interaction.response.send_message
-	author = interaction.user
-
-	if owner(author) == False:
-		return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
+@bot.command(brief="Reloads a cog.", message_command=False)
+async def reload(ctx, extension: str):
+	if owner(ctx.author) == False:
+		return await ctx.send(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
 	try:
-		bot.unload_extension(f"cogs.{extension}")
-		LOADED_EXTENSIONS.remove(extension)
-		UNLOADED_EXTENSIONS.append(extension)
-		bot.load_extension(f"cogs.{extension}")
-		UNLOADED_EXTENSIONS.remove(extension)
-		LOADED_EXTENSIONS.append(extension)
+		bot.reload_extension(f"cogs.{extension}")
 		output(f"Reloaded Cog \"{extension}\"")
-		await respond(f":ballot_box_with_check: **`cogs.{extension}` reloaded.**", ephemeral=True)
+		await ctx.send(f":ballot_box_with_check: **`cogs.{extension}` reloaded.**", ephemeral=True)
 	except Exception as error:
 		output(f"An error occurred while reloading \"{extension}\" cog.")
-		await respond(f":warning: An error occurred while reloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
+		await ctx.send(f":warning: An error occurred while reloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
 
-@tree.command(guild=CORE_GUILD, description="Unloads a cog.")
-@app_commands.describe(extension="Cog extension that needs to be unloaded.")
-@app_commands.choices(extension=get_loaded_extensions())
-async def unload(interaction, extension: str):
-	respond = interaction.response.send_message
-	author = interaction.user
-
-	if owner(author) == False:
-		return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
-	try:
-		bot.unload_extension(f"cogs.{extension}")
-		LOADED_EXTENSIONS.remove(extension)
-		UNLOADED_EXTENSIONS.append(extension)
-		output(f"Unloaded Cog \"{extension}\"")
-		await respond(f":ballot_box_with_check: **`cogs.{extension}` unloaded.**", ephemeral=True)
-	except Exception as error:
-		output(f"An error occurred while unloading \"{extension}\" cog.")
-		await respond(f":warning: An error occurred while unloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
-
-@tree.command(guild=CORE_GUILD, description="Loads a cog.")
-@app_commands.describe(extension="Cog extension that needs to be loaded.")
-@app_commands.choices(extension=get_unloaded_extensions())
-async def load(interaction, extension: str):
-	respond = interaction.response.send_message
-	author = interaction.user
-
-	if owner(author) == False:
-		return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
-	try:
-		bot.load_extension(f"cogs.{extension}")
-		UNLOADED_EXTENSIONS.remove(extension)
-		LOADED_EXTENSIONS.append(extension)
-		output(f"Reloaded Cog \"{extension}\"")
-		await respond(f":ballot_box_with_check: **`cogs.{extension}` loaded.**", ephemeral=True)
-	except Exception as error:
-		output(f"An error occurred while loading \"{extension}\" cog.")
-		await respond(f":warning: An error occurred while loading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
-
-@tree.command(guild=CORE_GUILD, description="Fetches updates from github and restarts the bot.")
-async def fetch(interaction):
-	respond = interaction.response.send_message
-	author = interaction.user
-
-	if owner(author) == False:
-		return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
+@bot.command(brief="Fetches updates from github and restarts the bot.", message_command=False)
+async def fetch(ctx):
+	if owner(ctx.author) == False:
+		return await ctx.send(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
 	try:
 		os.system(f"git pull")
-		await respond(f"Fetched and updated from github, reloading bot now...", ephemeral=True)
+		await ctx.send(f"Fetched and updated from github, reloading bot now...", ephemeral=True)
 		os.system(f"python3 index.py")
 		await bot.logout()
 	except Exception as error:
-		await respond(f":warning: An error occurred while fetching updates and restarting.\n\n```py\n{error}\n```", ephemeral=True)
+		await ctx.send(f":warning: An error occurred while fetching updates and restarting.\n\n```py\n{error}\n```", ephemeral=True)
 
-@tree.command(guild=CORE_GUILD, description="Pulls updates from Github")
-async def pull(interaction):
-	respond = interaction.response.send_message
-	if owner(interaction.user) == False:
-		return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
+@bot.command(brief="Pulls updates from Github", message_command=False)
+async def pull(ctx):
+	if owner(ctx.author) == False:
+		return await ctx.send(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
 	try:
 		os.system("git pull")
-		await respond(f":ballot_box_with_check: `$ git pull` executed with success.", ephemeral=True)
-		command_tree.sync()
+		await ctx.send(f":ballot_box_with_check: `$ git pull` executed with success.", ephemeral=True)
 	except Exception as error:
-		return await respond(f":warning: An error occurred while pulling github updates.\n\n```py\n{error}\n```", ephemeral=True)
+		return await ctx.send(f":warning: An error occurred while pulling github updates.\n\n```py\n{error}\n```", ephemeral=True)
 
 def main():
 	for file in os.listdir("./cogs"):
 		if file.endswith(".py"):
 			name = file[:-3]
-			TOTAL_EXTENSIONS.append(file[:-3])
 			try:
 				bot.load_extension(f"cogs.{name}")
-				LOADED_EXTENSIONS.append(name)
 				output(f"\"{name}\" Cog Loaded.")
 			except Exception as error:
-				UNLOADED_EXTENSIONS.append(name)
 				output(f"An error occurred while loading \"{name}\" cog.")
 	bot.run(env("TOKEN"))
 
