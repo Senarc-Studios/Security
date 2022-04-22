@@ -100,9 +100,12 @@ class Security(commands.Bot):
 			application_id=902464001101926450
 		)
 		self.already_running = False
+		self.id = 902464001101926450
+		self.LOADED_EXTENSIONS = []
+		self.UNLOADED_EXTENSIONS = []
 
 	async def start(self, *args, **kwargs):
-		cool_utils.JSON.open('config')
+		cool_utils.GlobalJSON.open('config')
 		Terminal.start_log()
 		await super().start(*args, **kwargs)
 
@@ -116,10 +119,17 @@ class Security(commands.Bot):
 
 		for filename in os.listdir("./cogs"):
 			if filename.endswith(".py"):
+				name = filename[:-3]
 				try:
-					await bot.load_extension(f"cogs.{filename[:-3]}")
-				except commands.errors.ExtensionError as error:
-					Terminal.error(error)
+					await bot.load_extension(f"cogs.{name}")
+					self.LOADED_EXTENSIONS.append(name)
+					output(f"\"{name}\" Cog Loaded.")
+				except Exception as error:
+					self.UNLOADED_EXTENSIONS.append(name)
+					output(f"An error occurred while loading \"{name}\" cog.")
+					print(error)
+
+		self.loop.create_task(sync_application(self))
 
 bot = Security()
 
@@ -187,7 +197,6 @@ async def unregister(interaction, user_id: str):
 	if cool_utils.GlobalJSON.get_data(user_id) != "guest" and cool_utils.GlobalJSON.get_data(user_id) != "privileged":
 		return await respond(f":ballot_box_with_check: Unregistered id `{user_id}`.")
 	else:
-		cool_utils.JSON.register_value(user_id, None)
 		cool_utils.GlobalJSON.register_value(user_id, None)
 		await respond(f":ballot_box_with_check: Unregistered id `{user_id}` from being `{type}`.", ephemeral=True)
 
