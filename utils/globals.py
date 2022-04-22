@@ -1,7 +1,7 @@
 import os
 import discord
 
-from discord import Terminal
+from cool_utils import Terminal
 
 def respond(interaction: discord.Interaction, message: str, ephemeral: bool=False):
     return interaction.response.send_message(message, ephemeral=True)
@@ -21,3 +21,6 @@ def owner(user):
     if user.id == env("OWNER_ID"):
         return True
     return False
+
+def output(content):
+	Terminal.display(content)
