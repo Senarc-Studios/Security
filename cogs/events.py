@@ -161,5 +161,5 @@ class Events(commands.Cog):
 		await invite.delete(reason="AUTO-DELETE-PROTECTION-RULE")
 		await log.send(embed=_embed)
 
-def setup(bot):
-	bot.add_cog(Events(bot))
+async def setup(bot):
+	await bot.add_cog(Events(bot))

@@ -52,5 +52,5 @@ class Log(commands.Cog):
 		await events.send(embed=_embed)
 		raise error
 
-def setup(bot):
-	bot.add_cog(Log(bot))
+async def setup(bot):
+	await bot.add_cog(Log(bot))
