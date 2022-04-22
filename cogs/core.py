@@ -9,32 +9,38 @@ from discord.app_commands import Choice
 
 from utils.globals import respond, author, owner, output
 
-def get_loaded_extensions(self):
-	for extension in self.bot.LOADED_EXTENSIONS:
-		choices = []
-		class_ = Choice(name=extension, value=extension)
-		choices.append(class_)
-	if len(self.bot.LOADED_EXTENSIONS) == 0:
-		return [Choice(name="No Extensions", value="No Extensions")]
-	return choices
+UNLOADED_EXTENSIONS = []
+LOADED_EXTENSIONS = []
 
-def get_unloaded_extensions(self):
-	for extension in self.bot.UNLOADED_EXTENSIONS:
-		choices = []
-		class_ = Choice(name=extension, value=extension)
-		choices.append(class_)
-	if len(self.bot.UNLOADED_EXTENSIONS) == 0:
+async def get_loaded_extensions(interaction, current: str):
+	if LOADED_EXTENSIONS == []:
 		return [Choice(name="No Extensions", value="No Extensions")]
-	return choices
+	return [
+		app_commands.Choice(name=extension, value=extension)
+		for extensions in LOADED_EXTENSIONS if current.lower() in extensions.lower()
+	]
+
+async def get_unloaded_extensions(interaction, current: str):
+	if UNLOADED_EXTENSIONS == []:
+		return [Choice(name="No Extensions", value="No Extensions")]
+	return [
+		app_commands.Choice(name=extension, value=extension)
+		for extensions in UNLOADED_EXTENSIONS if current.lower() in extensions.lower()
+	]
 
 class Core(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
+		for extension in self.bot.UNLOADED_EXTENSIONS:
+			UNLOADED_EXTENSIONS.append(extension)
+
+		for extension in self.bot.LOADED_EXTENSIONS:
+			LOADED_EXTENSIONS.append(extension)
 
 	@app_commands.command(description="Reloads a cog.")
 	@app_commands.describe(extension="Cog extension that needs to be reloaded.")
-	@app_commands.choices(extension=get_loaded_extensions())
-	async def reload(self, interaction, extension: Choice[str]):
+	@app_commands.autocomplete(extension=get_loaded_extensions)
+	async def reload(self, interaction, extension: str):
 		respond = interaction.response.send_message
 		author = interaction.user
 
@@ -61,4 +67,4 @@ class Core(commands.Cog):
 		sys.exit()
 
 async def setup(bot):
-	bot.add_cog(Core(bot))
+	await bot.add_cog(Core(bot))
