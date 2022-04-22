@@ -2,3 +2,5 @@
 .env
 .env
 *.pyc
+.env
+latest.log
