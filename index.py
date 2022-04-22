@@ -115,8 +115,6 @@ class Security(commands.Bot):
 		await super().close()
 
 	async def setup_hook(self):
-		self.loop.create_task(sync_application(self))
-
 		for filename in os.listdir("./cogs"):
 			if filename.endswith(".py"):
 				name = filename[:-3]
