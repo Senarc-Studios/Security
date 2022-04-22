@@ -192,11 +192,11 @@ async def unregister(interaction, user_id: str):
 
 	if owner(author) == False:
 		return await respond(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
-	if cool_utils.GlobalJSON.get_data(user_id) != "guest" and cool_utils.GlobalJSON.get_data(user_id) != "privileged":
-		return await respond(f":ballot_box_with_check: Unregistered id `{user_id}`.")
-	else:
-		cool_utils.GlobalJSON.register_value(user_id, None)
-		await respond(f":ballot_box_with_check: Unregistered id `{user_id}` from being `{type}`.", ephemeral=True)
+	_type = cool_utils.GlobalJSON.get_data(user_id, None)
+	if _type == None:
+		return await respond(f":no_entry_sign: Unable to find id `{user_id}`.", ephemeral=True)
+	cool_utils.GlobalJSON.register_value(user_id, None)
+	await respond(f":ballot_box_with_check: Unregistered id `{user_id}` from being `{_type}`.", ephemeral=True)
 
 @bot.tree.command(guild=CORE_GUILD, description="Fetches updates from github and restarts the bot.")
 async def fetch(interaction):
