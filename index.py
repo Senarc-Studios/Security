@@ -165,13 +165,13 @@ async def register(interaction, type: Literal["guest", "developer", "privileged"
 	if owner(author) == False:
 		return await respond(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
 	if type.lower() == "guest":
-		cool_utils.JSON.register_value(user_id, 'guests')
+		cool_utils.GlobalJSON.register_value(user_id, 'guests')
 		await respond(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral=True)
 	elif type.lower() == "privileged":
-		cool_utils.JSON.register_value(user_id, 'privileged')
+		cool_utils.GlobalJSON.register_value(user_id, 'privileged')
 		await respond(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral=True)
 	elif type.lower() == "developer":
-		cool_utils.JSON.register_value(user_id, 'developer')
+		cool_utils.GlobalJSON.register_value(user_id, 'developer')
 		await respond(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral=True)
 	else:
 		await respond(f":no_entry_sign: Invalid type!", ephemeral=True)
@@ -184,10 +184,11 @@ async def unregister(interaction, user_id: str):
 
 	if owner(author) == False:
 		return await respond(f":no_entry_sign: You don't have permissions to use this command.", ephemeral=True)
-	if cool_utils.JSON.get_data(user_id) != "guest" and cool_utils.JSON.get_data(user_id) != "privileged":
+	if cool_utils.GlobalJSON.get_data(user_id) != "guest" and cool_utils.GlobalJSON.get_data(user_id) != "privileged":
 		return await respond(f":ballot_box_with_check: Unregistered id `{user_id}`.")
 	else:
 		cool_utils.JSON.register_value(user_id, None)
+		cool_utils.GlobalJSON.register_value(user_id, None)
 		await respond(f":ballot_box_with_check: Unregistered id `{user_id}` from being `{type}`.", ephemeral=True)
 
 @bot.tree.command(guild=CORE_GUILD, description="Fetches updates from github and restarts the bot.")
@@ -220,4 +221,5 @@ async def pull(interaction):
 def main():
 	bot.run(env("TOKEN"))
 
-main()
+if __name__ == "__main__":
+	main()
