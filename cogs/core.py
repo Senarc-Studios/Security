@@ -59,6 +59,44 @@ class Core(commands.Cog):
 			output(f"An error occurred while reloading \"{extension}\" cog.")
 			await respond(f":warning: An error occurred while reloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
 
+	@app_commands.command(description="Loads a cog.")
+	@app_commands.describe(extension="Cog extension that needs to be loaded.")
+	@app_commands.autocomplete(extension=get_unloaded_extensions)
+	async def load(self, interaction, extension: str):
+		respond = interaction.response.send_message
+		author = interaction.user
+
+		if owner(author) == False:
+			return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
+		try:
+			await self.bot.load_extension(f"cogs.{extension}")
+			self.bot.UNLOADED_EXTENSIONS.remove(extension)
+			self.bot.LOADED_EXTENSIONS.append(extension)
+			output(f"Loaded Cog \"{extension}\"")
+			await respond(f":ballot_box_with_check: **`cogs.{extension}` loaded.**", ephemeral=True)
+		except Exception as error:
+			output(f"An error occurred while loading \"{extension}\" cog.")
+			await respond(f":warning: An error occurred while loading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
+
+	@app_commands.command(description="Unloads a cog.")
+	@app_commands.describe(extension="Cog extension that needs to be unloaded.")
+	@app_commands.autocomplete(extension=get_loaded_extensions)
+	async def unload(self, interaction, extension: str):
+		respond = interaction.response.send_message
+		author = interaction.user
+
+		if owner(author) == False:
+			return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
+		try:
+			await self.bot.load_extension(f"cogs.{extension}")
+			self.bot.UNLOADED_EXTENSIONS.append(extension)
+			self.bot.LOADED_EXTENSIONS.remove(extension)
+			output(f"Unoaded Cog \"{extension}\"")
+			await respond(f":ballot_box_with_check: **`cogs.{extension}` unloaded.**", ephemeral=True)
+		except Exception as error:
+			output(f"An error occurred while unloading \"{extension}\" cog.")
+			await respond(f":warning: An error occurred while unloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
+
 	@app_commands.command(description="Shuts down the bot.")
 	async def shutdown(self, interaction: discord.Interaction):
 		if owner(author(interaction)) == False:
