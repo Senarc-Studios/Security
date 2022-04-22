@@ -1,10 +1,11 @@
+from distutils import extension
 import sys
 import discord
 
 from discord import app_commands
 from discord.ext import commands
 
-from typing import Choice
+from discord.app_commands import Choice
 
 from utils.globals import respond, author, owner, output
 
