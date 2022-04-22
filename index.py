@@ -86,8 +86,7 @@ intents = discord.Intents.all()
 intents.members = True
 
 async def sync_application(self):
-	await self.wait_until_ready()
-	await self.tree.sync()
+	await self.tree.sync(guild=CORE_GUILD)
 	Terminal.display("Application synced successfully.")
 
 class Security(commands.Bot):
@@ -97,7 +96,8 @@ class Security(commands.Bot):
 			intents=intents,
 			slash_commands=True,
 			message_commands=True,
-			case_insensitive=True
+			case_insensitive=True,
+			application_id=902464001101926450
 		)
 		self.already_running = False
 
@@ -125,11 +125,14 @@ bot = Security()
 
 @bot.event
 async def on_ready():
+	bot.already_running = True
 	embed_dict = build_embed("Bot Ready", "Security Bot Events", f"Bot has started.")
 	if await log_event(embed_dict, bot=bot) == True:
 		output("Bot Started.")
 	else:
 		output("Bot Started, Unable to log event.")
+	bot.tree.clear_commands(guild=None)
+	output("Ensuring no global commands exists.")
 
 @bot.tree.command(guild=CORE_GUILD, description="Shuts down the bot.")
 async def shutdown(interaction: discord.Interaction):
