@@ -190,66 +190,6 @@ async def unregister(interaction, user_id: str):
 		cool_utils.JSON.register_value(user_id, None)
 		await respond(f":ballot_box_with_check: Unregistered id `{user_id}` from being `{type}`.", ephemeral=True)
 
-@bot.tree.command(guild=CORE_GUILD, description="Reloads a cog.")
-@app_commands.describe(extension="Cog extension that needs to be reloaded.")
-@app_commands.choices(extension=get_loaded_extensions())
-async def reload(interaction, extension: Choice[str]):
-	respond = interaction.response.send_message
-	author = interaction.user
-
-	if owner(author) == False:
-		return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
-	try:
-		bot.unload_extension(f"cogs.{extension}")
-		LOADED_EXTENSIONS.remove(extension)
-		UNLOADED_EXTENSIONS.append(extension)
-		bot.load_extension(f"cogs.{extension}")
-		UNLOADED_EXTENSIONS.remove(extension)
-		LOADED_EXTENSIONS.append(extension)
-		output(f"Reloaded Cog \"{extension}\"")
-		await respond(f":ballot_box_with_check: **`cogs.{extension}` reloaded.**", ephemeral=True)
-	except Exception as error:
-		output(f"An error occurred while reloading \"{extension}\" cog.")
-		await respond(f":warning: An error occurred while reloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
-
-@bot.tree.command(guild=CORE_GUILD, description="Unloads a cog.")
-@app_commands.describe(extension="Cog extension that needs to be unloaded.")
-@app_commands.choices(extension=get_loaded_extensions())
-async def unload(interaction, extension: Choice[str]):
-	respond = interaction.response.send_message
-	author = interaction.user
-
-	if owner(author) == False:
-		return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
-	try:
-		bot.unload_extension(f"cogs.{extension}")
-		LOADED_EXTENSIONS.remove(extension)
-		UNLOADED_EXTENSIONS.append(extension)
-		output(f"Unloaded Cog \"{extension}\"")
-		await respond(f":ballot_box_with_check: **`cogs.{extension}` unloaded.**", ephemeral=True)
-	except Exception as error:
-		output(f"An error occurred while unloading \"{extension}\" cog.")
-		await respond(f":warning: An error occurred while unloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
-
-@bot.tree.command(guild=CORE_GUILD, description="Loads a cog.")
-@app_commands.describe(extension="Cog extension that needs to be loaded.")
-@app_commands.choices(extension=get_unloaded_extensions())
-async def load(interaction, extension: Choice[str]):
-	respond = interaction.response.send_message
-	author = interaction.user
-
-	if owner(author) == False:
-		return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
-	try:
-		bot.load_extension(f"cogs.{extension}")
-		UNLOADED_EXTENSIONS.remove(extension)
-		LOADED_EXTENSIONS.append(extension)
-		output(f"Reloaded Cog \"{extension}\"")
-		await respond(f":ballot_box_with_check: **`cogs.{extension}` loaded.**", ephemeral=True)
-	except Exception as error:
-		output(f"An error occurred while loading \"{extension}\" cog.")
-		await respond(f":warning: An error occurred while loading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral=True)
-
 @bot.tree.command(guild=CORE_GUILD, description="Fetches updates from github and restarts the bot.")
 async def fetch(interaction):
 	respond = interaction.response.send_message
@@ -278,17 +218,6 @@ async def pull(interaction):
 		return await respond(f":warning: An error occurred while pulling github updates.\n\n```py\n{error}\n```", ephemeral=True)
 
 def main():
-	for file in os.listdir("./cogs"):
-		if file.endswith(".py"):
-			name = file[:-3]
-			TOTAL_EXTENSIONS.append(file[:-3])
-			try:
-				bot.load_extension(f"cogs.{name}")
-				LOADED_EXTENSIONS.append(name)
-				output(f"\"{name}\" Cog Loaded.")
-			except Exception as error:
-				UNLOADED_EXTENSIONS.append(name)
-				output(f"An error occurred while loading \"{name}\" cog.")
 	bot.run(env("TOKEN"))
 
 main()
