@@ -47,7 +47,7 @@ class Core(commands.Cog):
 		if owner(author) == False:
 			return await respond(f":no_entry_sign: You don't have permission to use this command.", ephemeral=True)
 		try:
-			self.bot.unload_extension(f"cogs.{extension}")
+			await self.bot.unload_extension(f"cogs.{extension}")
 			self.bot.LOADED_EXTENSIONS.remove(extension)
 			self.bot.UNLOADED_EXTENSIONS.append(extension)
 			await self.bot.load_extension(f"cogs.{extension}")
