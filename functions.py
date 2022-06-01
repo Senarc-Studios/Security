@@ -94,3 +94,9 @@ async def get_db_users(self, interaction, current: str) -> List[Choice]:
 		for user in users[:25] if current in user["discord_id"] or current in user["discord"]
 	]
 
+class Role(enum):
+	OWNER = "owner"
+	EXECUTIVE = "executive"
+	MANAGER = "manager"
+	DEVELOPER = "developer"
+	COMMUNITY = "community"
