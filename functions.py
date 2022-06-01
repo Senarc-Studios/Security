@@ -1,6 +1,11 @@
 import os
+import asyncio
 
-from typing import List
+from typing import List, enum
+from discord.utils import get
+from motor.motor_asyncio import AsyncIOMotorClient
+
+from discord.app_commands import Choice
 
 try:
 	from cool_utils import Terminal
@@ -76,3 +81,16 @@ class Checks:
 	def add_guest(self, id: int) -> None:
 		self.guests.append(id)
 		return None
+
+USER_MONGO = AsyncIOMotorClient(Env.get("MONGO"))["senarc"]["users"]
+
+async def get_db_users(self, interaction, current: str) -> List[Choice]:
+	users = await USER_MONGO.find({})
+	return [
+		Choice(
+			name = user["discord"],
+			value = int(user["discord_id"])
+		)
+		for user in users[:25] if current in user["discord_id"] or current in user["discord"]
+	]
+
