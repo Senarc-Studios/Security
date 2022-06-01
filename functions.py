@@ -100,3 +100,28 @@ class Role(enum):
 	MANAGER = "manager"
 	DEVELOPER = "developer"
 	COMMUNITY = "community"
+
+class User:
+	def __init__(self, id: int) -> None:
+		user_ = asyncio.run(USER_MONGO.find_one({"discord_id": id}))
+		self.role = user_["role"]
+		self.token = user_["_id"]
+		self.github_username = user_["github_username"] if user_["github_username"] is str else None
+		self.name: str = "".join(user_["discord"].split("#")[:-1])
+		self.discriminator: int = user_["discord"].split("#")[-1]
+		self.access: list = user_["access"]
+
+	async def remove(self) -> None:
+		await USER_MONGO.delete_one({"_id": self.token})
+
+	async def ban(self) -> None:
+		await USER_MONGO.update_one(
+			{
+				"_id": self.id
+			},
+			{
+				"$set": {
+					"banned": True
+				}
+			}
+		)
