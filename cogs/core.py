@@ -7,7 +7,12 @@ from discord.ext import commands
 
 from discord.app_commands import Choice
 
-from utils.globals import respond, author, owner, output
+from utils.globals import (
+	respond,
+	author,
+	owner,
+	output
+)
 
 UNLOADED_EXTENSIONS = []
 LOADED_EXTENSIONS = []
@@ -37,9 +42,12 @@ class Core(commands.Cog):
 			for extensions in UNLOADED_EXTENSIONS if current.lower() in extensions.lower()
 		]
 
-	@app_commands.command(description="Reloads a cog.")
-	@app_commands.describe(extension="Cog extension that needs to be reloaded.")
-	@app_commands.autocomplete(extension=get_loaded_extensions)
+	@app_commands.command(
+		name = "reload",
+		description = "Reloads a cog."
+	)
+	@app_commands.describe(extension = "Cog extension that needs to be reloaded.")
+	@app_commands.autocomplete(extension = get_loaded_extensions)
 	async def reload(self, interaction, extension: str):
 		respond = interaction.response.send_message
 		author = interaction.user
@@ -59,9 +67,12 @@ class Core(commands.Cog):
 			output(f"An error occurred while reloading \"{extension}\" cog.")
 			await respond(f":warning: An error occurred while reloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral = True)
 
-	@app_commands.command(description="Loads a cog.")
-	@app_commands.describe(extension="Cog extension that needs to be loaded.")
-	@app_commands.autocomplete(extension=get_unloaded_extensions)
+	@app_commands.command(
+		name = "load",
+		description="Loads a cog."
+	)
+	@app_commands.describe(extension = "Cog extension that needs to be loaded.")
+	@app_commands.autocomplete(extension = get_unloaded_extensions)
 	async def load(self, interaction, extension: str):
 		respond = interaction.response.send_message
 		author = interaction.user
@@ -78,9 +89,12 @@ class Core(commands.Cog):
 			output(f"An error occurred while loading \"{extension}\" cog.")
 			await respond(f":warning: An error occurred while loading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral = True)
 
-	@app_commands.command(description="Unloads a cog.")
-	@app_commands.describe(extension="Cog extension that needs to be unloaded.")
-	@app_commands.autocomplete(extension=get_loaded_extensions)
+	@app_commands.command(
+		name = "unload",
+		description = "Unloads a cog."
+	)
+	@app_commands.describe(extension = "Cog extension that needs to be unloaded.")
+	@app_commands.autocomplete(extension = get_loaded_extensions)
 	async def unload(self, interaction, extension: str):
 		respond = interaction.response.send_message
 		author = interaction.user
@@ -97,7 +111,10 @@ class Core(commands.Cog):
 			output(f"An error occurred while unloading \"{extension}\" cog.")
 			await respond(f":warning: An error occurred while unloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral = True)
 
-	@app_commands.command(description="Shuts down the bot.")
+	@app_commands.command(
+		name = "shutdown",
+		description = "Shuts down the bot."
+	)
 	async def shutdown(self, interaction: discord.Interaction):
 		if owner(author(interaction)) == False:
 			return await respond(interaction, f":no_entry_sign: You don't have permissions to use this command.", ephemeral = True)
