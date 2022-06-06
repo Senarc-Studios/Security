@@ -151,8 +151,7 @@ class Security(commands.Bot):
 		else:
 			owner = await self.fetch_user(int(env("OWNER")))
 			await interaction.response.edit_message(
-				content = "Your request to access this owner only command has been sent to the owner, Please hold...",
-				ephemeral = True
+				content = "Your request to access this owner only command has been sent to the owner, Please hold..."
 			)
 			view = Buttons(
 				command_name = interaction.command.name,
