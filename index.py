@@ -8,11 +8,10 @@ from typing import Literal
 from cool_utils import Terminal
 from dotenv import load_dotenv, find_dotenv
 
-from discord import app_commands
+from discord import ButtonStyle, app_commands
 from discord.ui import View, Button, button
 from discord.ext import commands
 from discord.app_commands import Choice
-from discord.ButtonStyle import gray, red, green, blue
 
 from utils.globals import respond, author
 
@@ -35,7 +34,7 @@ class Buttons(View):
 
 	@button(
 		label = "Allow",
-		style = green
+		style = ButtonStyle.green
 	)
 	async def allow(self, button: Button, interaction):
 		for button_ in self.children:
@@ -53,7 +52,7 @@ class Buttons(View):
 
 	@button(
 		label = "Deny",
-		style = red
+		style = ButtonStyle.red
 	)
 	async def deny(self, button: Button, interaction):
 		for button_ in self.children:
