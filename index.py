@@ -21,7 +21,53 @@ LOADED_EXTENSIONS = []
 UNLOADED_EXTENSIONS = [] 
 CORE_GUILD = discord.Object(id=902431960218075246)
 
+button_cache = {}
+
 load_dotenv(find_dotenv())
+
+class Buttons(View):
+	def __init__(self, command_name, message_id: int, bot, *, timeout = 30):
+		super().__init__(timeout = timeout)
+		self.bot = bot
+		self.command_name = command_name
+		self.bot.temp_var = None
+		self.message_id = message_id
+
+	@button(
+		label = "Allow",
+		style = green
+	)
+	async def allow(self, button: Button, interaction):
+		for button_ in self.children:
+			button_.disabled = True
+
+		await interaction.response.edit_message(
+			f"You've allowed {interaction.user.mention} to use the `/{self.command_name}` temporarily.",
+			view = self
+		)
+		button_cache.update(
+			{
+				self.message_id: True
+			}
+		)
+
+	@button(
+		label = "Deny",
+		style = red
+	)
+	async def deny(self, button: Button, interaction):
+		for button_ in self.children:
+			button_.disabled = True
+
+		await interaction.response.edit_message(
+			f"You've denied {interaction.user.mention} from using the `/{self.command_name}`.",
+			view = self
+		)
+		button_cache.update(
+			{
+				self.message_id: False
+			}
+		)
 
 def get_loaded_extensions():
 	for extension in LOADED_EXTENSIONS:
