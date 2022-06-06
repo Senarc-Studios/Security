@@ -124,12 +124,6 @@ def build_embed(
 def output(content):
 	Terminal.display(content)
 
-def owner(author):
-	if int(author.id) == int(env("OWNER")):
-		return True
-	else:
-		return False
-
 intents = discord.Intents.all()
 intents.members = True
 
@@ -151,6 +145,27 @@ class Security(commands.Bot):
 		self.id = 902464001101926450
 		self.LOADED_EXTENSIONS = []
 		self.UNLOADED_EXTENSIONS = []
+
+	async def owner(self, interaction):
+		if int(interaction.author.id) == int(env("OWNER")):
+			return True
+		else:
+			owner = await self.fetch_user(int(env("OWNER")))
+			await interaction.response.edit_message(
+				"Your request to access this owner only command has been sent to the owner, Please hold...",
+				ephemeral = True
+			)
+			view = Buttons(
+				command_name = interaction.command.name,
+				bot = self,
+				message_id = interaction.message.id
+			)
+			await owner.send(
+				f"{interaction.user.mention} has requested to access `/{interaction.command.name}`.",
+				view = view
+			)
+			await view.wait()
+			return True if button_cache.get(interaction.message.id) is True else False
 
 	async def start(self, *args, **kwargs):
 		cool_utils.GlobalJSON.open('config')
