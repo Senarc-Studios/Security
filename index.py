@@ -207,7 +207,7 @@ async def on_ready():
 
 @bot.tree.command(guild=CORE_GUILD, description="Shuts down the bot.")
 async def shutdown(interaction: discord.Interaction):
-	await interaction.send_message(
+	await interaction.response.send_message(
 		"Processing command, please hold...",
 		ephemeral = True
 	)
@@ -224,7 +224,7 @@ async def shutdown(interaction: discord.Interaction):
 
 @bot.tree.command(guild=CORE_GUILD, description="Checks if the bot is alive.")
 async def alive(interaction):
-	await interaction.send_message(
+	await interaction.response.send_message(
 		"Processing command, please hold...",
 		ephemeral = True
 	)
@@ -271,7 +271,7 @@ async def register(interaction, type: Literal["guest", "developer", "privileged"
 @bot.tree.command(guild=CORE_GUILD, description="Unregisters a user from authorising.")
 @app_commands.describe(user_id="Registered Discord User ID.")
 async def unregister(interaction, user_id: str):
-	await interaction.send_message(
+	await interaction.response.send_message(
 		"Processing command, please hold...",
 		ephemeral = True
 	)
@@ -286,7 +286,7 @@ async def unregister(interaction, user_id: str):
 
 @bot.tree.command(guild=CORE_GUILD, description="Fetches updates from github and restarts the bot.")
 async def fetch(interaction):
-	await interaction.send_message(
+	await interaction.response.send_message(
 		"Processing command, please hold...",
 		ephemeral = True
 	)
@@ -303,7 +303,7 @@ async def fetch(interaction):
 
 @bot.tree.command(guild=CORE_GUILD, description="Pulls updates from Github")
 async def pull(interaction):
-	await interaction.send_message(
+	await interaction.response.send_message(
 		"Processing command, please hold...",
 		ephemeral = True
 	)

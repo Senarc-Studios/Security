@@ -52,7 +52,7 @@ class Core(commands.Cog):
 		respond = interaction.response.send_message
 		author = interaction.user
 
-		await interaction.send_message(
+		await interaction.response.send_message(
 			"Processing command, please hold...",
 			ephemeral = True
 		)
@@ -81,7 +81,7 @@ class Core(commands.Cog):
 		respond = interaction.response.send_message
 		author = interaction.user
 
-		await interaction.send_message(
+		await interaction.response.send_message(
 			"Processing command, please hold...",
 			ephemeral = True
 		)
@@ -107,7 +107,7 @@ class Core(commands.Cog):
 		respond = interaction.response.send_message
 		author = interaction.user
 
-		await interaction.send_message(
+		await interaction.response.send_message(
 			"Processing command, please hold...",
 			ephemeral = True
 		)
