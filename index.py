@@ -146,7 +146,7 @@ class Security(commands.Bot):
 		self.UNLOADED_EXTENSIONS = []
 
 	async def owner(self, interaction):
-		if int(interaction.author.id) == int(env("OWNER")):
+		if int(interaction.user.id) == int(env("OWNER")):
 			return True
 		else:
 			owner = await self.fetch_user(int(env("OWNER")))
