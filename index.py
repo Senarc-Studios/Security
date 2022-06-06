@@ -212,12 +212,10 @@ async def shutdown(interaction: discord.Interaction):
 	)
 	if await bot.owner(interaction = interaction) == False:
 		return await interaction.response.edit_message(
-			f":no_entry_sign: Your permission to use this command has been denied.",
-			ephemeral = True
+			f":no_entry_sign: Your permission to use this command has been denied."
 		)
 	await interaction.response.edit_message(
-		f":ballot_box_with_check: Bot Shutting Down...",
-		ephemeral = True
+		f":ballot_box_with_check: Bot Shutting Down..."
 	)
 	sys.exit()
 
@@ -230,8 +228,7 @@ async def alive(interaction):
 
 	try:
 		await interaction.response.edit_message(
-			f":ballot_box_with_check: Security bot is alive!",
-			ephemeral = True
+			f":ballot_box_with_check: Security bot is alive!"
 		)
 	except Exception as error:
 		embed_dict = ("ERROR", "Security Bot Errors", f"```py\n{error}\n```")
@@ -251,16 +248,16 @@ async def register(interaction, type: Literal["guest", "developer", "privileged"
 	)
 
 	if await bot.owner(interaction = interaction) == False:
-		return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.", ephemeral = True)
+		return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.")
 	if type.lower() == "guest":
 		cool_utils.GlobalJSON.register_value(user_id, 'guests')
-		await interaction.response.edit_message(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral = True)
+		await interaction.response.edit_message(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.")
 	elif type.lower() == "privileged":
 		cool_utils.GlobalJSON.register_value(user_id, 'privileged')
-		await interaction.response.edit_message(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral = True)
+		await interaction.response.edit_message(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.")
 	elif type.lower() == "developer":
 		cool_utils.GlobalJSON.register_value(user_id, 'developer')
-		await interaction.response.edit_message(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.", ephemeral = True)
+		await interaction.response.edit_message(f":ballot_box_with_check: Registered id `{user_id}` as `{type}`.")
 	else:
 		await interaction.response.edit_message(
 			f":no_entry_sign: Invalid type!",
@@ -276,12 +273,12 @@ async def unregister(interaction, user_id: str):
 	)
 
 	if await bot.owner(interaction = interaction) == False:
-		return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.", ephemeral = True)
+		return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.")
 	_type = cool_utils.GlobalJSON.get_data(user_id, None)
 	if _type == None:
-		return await interaction.response.edit_message(f":no_entry_sign: Unable to find id `{user_id}`.", ephemeral = True)
+		return await interaction.response.edit_message(f":no_entry_sign: Unable to find id `{user_id}`.")
 	cool_utils.GlobalJSON.register_value(user_id, None)
-	await interaction.response.edit_message(f":ballot_box_with_check: Unregistered id `{user_id}` from being `{_type}`.", ephemeral = True)
+	await interaction.response.edit_message(f":ballot_box_with_check: Unregistered id `{user_id}` from being `{_type}`.")
 
 @bot.tree.command(guild=CORE_GUILD, description="Fetches updates from github and restarts the bot.")
 async def fetch(interaction):
@@ -291,14 +288,14 @@ async def fetch(interaction):
 	)
 
 	if await bot.owner(interaction = interaction) == False:
-		return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.", ephemeral = True)
+		return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.")
 	try:
 		os.system(f"git pull")
-		await interaction.response.edit_message(f"Fetched and updated from github, reloading bot now...", ephemeral = True)
+		await interaction.response.edit_message(f"Fetched and updated from github, reloading bot now...")
 		os.system(f"python3 index.py")
 		await bot.logout()
 	except Exception as error:
-		await interaction.response.edit_message(f":warning: An error occurred while fetching updates and restarting.\n\n```py\n{error}\n```", ephemeral = True)
+		await interaction.response.edit_message(f":warning: An error occurred while fetching updates and restarting.\n\n```py\n{error}\n```")
 
 @bot.tree.command(guild=CORE_GUILD, description="Pulls updates from Github")
 async def pull(interaction):
@@ -307,13 +304,13 @@ async def pull(interaction):
 		ephemeral = True
 	)
 	if await bot.owner(interaction = interaction) == False:
-		return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.", ephemeral = True)
+		return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.")
 	try:
 		os.system("git pull")
-		await interaction.response.edit_message(f":ballot_box_with_check: `$ git pull` executed with success.", ephemeral = True)
+		await interaction.response.edit_message(f":ballot_box_with_check: `$ git pull` executed with success.")
 		await bot.tree.sync(guild=CORE_GUILD)
 	except Exception as error:
-		return await interaction.response.edit_message(f":warning: An error occurred while pulling github updates.\n\n```py\n{error}\n```", ephemeral = True)
+		return await interaction.response.edit_message(f":warning: An error occurred while pulling github updates.\n\n```py\n{error}\n```")
 
 if __name__ == "__main__":
 	bot.run(env("TOKEN"))

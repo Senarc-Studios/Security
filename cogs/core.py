@@ -57,7 +57,7 @@ class Core(commands.Cog):
 			ephemeral = True
 		)
 		if await self.bot.owner(interaction = interaction) == False:
-			return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.", ephemeral = True)
+			return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.")
 		try:
 			await self.bot.unload_extension(f"cogs.{extension}")
 			self.bot.LOADED_EXTENSIONS.remove(extension)
@@ -66,10 +66,10 @@ class Core(commands.Cog):
 			self.bot.UNLOADED_EXTENSIONS.remove(extension)
 			self.bot.LOADED_EXTENSIONS.append(extension)
 			output(f"Reloaded Cog \"{extension}\"")
-			await interaction.response.edit_message(f":ballot_box_with_check: **`cogs.{extension}` reloaded.**", ephemeral = True)
+			await interaction.response.edit_message(f":ballot_box_with_check: **`cogs.{extension}` reloaded.**")
 		except Exception as error:
 			output(f"An error occurred while reloading \"{extension}\" cog.")
-			await interaction.response.edit_message(f":warning: An error occurred while reloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral = True)
+			await interaction.response.edit_message(f":warning: An error occurred while reloading **`cogs.{extension}`**.\n\n```py\n{error}\n```")
 
 	@app_commands.command(
 		name = "load",
@@ -86,16 +86,16 @@ class Core(commands.Cog):
 			ephemeral = True
 		)
 		if await self.bot.owner(interaction = interaction) == False:
-			return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.", ephemeral = True)
+			return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.")
 		try:
 			await self.bot.load_extension(f"cogs.{extension}")
 			self.bot.UNLOADED_EXTENSIONS.remove(extension)
 			self.bot.LOADED_EXTENSIONS.append(extension)
 			output(f"Loaded Cog \"{extension}\"")
-			await interaction.response.edit_message(f":ballot_box_with_check: **`cogs.{extension}` loaded.**", ephemeral = True)
+			await interaction.response.edit_message(f":ballot_box_with_check: **`cogs.{extension}` loaded.**")
 		except Exception as error:
 			output(f"An error occurred while loading \"{extension}\" cog.")
-			await interaction.response.edit_message(f":warning: An error occurred while loading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral = True)
+			await interaction.response.edit_message(f":warning: An error occurred while loading **`cogs.{extension}`**.\n\n```py\n{error}\n```")
 
 	@app_commands.command(
 		name = "unload",
@@ -112,25 +112,25 @@ class Core(commands.Cog):
 			ephemeral = True
 		)
 		if await self.bot.owner(interaction = interaction) == False:
-			return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.", ephemeral = True)
+			return await interaction.response.edit_message(f":no_entry_sign: Your permission to use this command has been denied.")
 		try:
 			await self.bot.load_extension(f"cogs.{extension}")
 			self.bot.UNLOADED_EXTENSIONS.append(extension)
 			self.bot.LOADED_EXTENSIONS.remove(extension)
 			output(f"Unoaded Cog \"{extension}\"")
-			await interaction.response.edit_message(f":ballot_box_with_check: **`cogs.{extension}` unloaded.**", ephemeral = True)
+			await interaction.response.edit_message(f":ballot_box_with_check: **`cogs.{extension}` unloaded.**")
 		except Exception as error:
 			output(f"An error occurred while unloading \"{extension}\" cog.")
-			await interaction.response.edit_message(f":warning: An error occurred while unloading **`cogs.{extension}`**.\n\n```py\n{error}\n```", ephemeral = True)
+			await interaction.response.edit_message(f":warning: An error occurred while unloading **`cogs.{extension}`**.\n\n```py\n{error}\n```")
 
 	@app_commands.command(
 		name = "shutdown",
 		description = "Shuts down the bot."
 	)
 	async def shutdown(self, interaction: discord.Interaction):
-		if owner(author(interaction)) == False:
-			return await interaction.response.edit_message(f":no_entry_sign: You don't have permissions to use this command.", ephemeral = True)
-		await interaction.response.edit_message(f":ballot_box_with_check: Bot Shutting Down...", ephemeral = True)
+		if await self.bot.owner(interaction) == False:
+			return await interaction.response.edit_message(f":no_entry_sign: You don't have permissions to use this command.")
+		await interaction.response.edit_message(f":ballot_box_with_check: Bot Shutting Down...")
 		sys.exit()
 
 async def setup(bot):
