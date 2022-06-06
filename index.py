@@ -9,8 +9,10 @@ from cool_utils import Terminal
 from dotenv import load_dotenv, find_dotenv
 
 from discord import app_commands
+from discord.ui import View, Button, button
 from discord.ext import commands
 from discord.app_commands import Choice
+from discord.ButtonStyle import gray, red, green, blue
 
 from utils.globals import respond, author
 
