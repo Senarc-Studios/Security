@@ -7,3 +7,4 @@ latest.log
 config.json
 .env
 *.json
+.env
