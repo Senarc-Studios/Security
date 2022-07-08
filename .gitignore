@@ -1,10 +1,5 @@
-
-.env
 .env
 *.pyc
-.env
 latest.log
 config.json
-.env
 *.json
-.env
