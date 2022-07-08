@@ -188,8 +188,8 @@ class Security(commands.Bot):
 
 bot = Security()
 
-@bot.event
-async def on_ready():
+@bot.listen("on_ready")
+async def startup():
 	bot.already_running = True
 	embed_dict = build_embed("Bot Ready", "Security Bot Events", f"Bot has started.")
 	if await log_event(embed_dict, bot=bot) == True:
