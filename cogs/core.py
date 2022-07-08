@@ -57,7 +57,7 @@ class Core(commands.Cog):
 			ephemeral = True
 		)
 		if await self.bot.owner(interaction = interaction) == False:
-			return await interaction.response.edit_message(content = f":no_entry_sign: Your permission to use this command has been denied.")
+			return
 		try:
 			await self.bot.unload_extension(f"cogs.{extension}")
 			self.bot.LOADED_EXTENSIONS.remove(extension)
@@ -86,7 +86,7 @@ class Core(commands.Cog):
 			ephemeral = True
 		)
 		if await self.bot.owner(interaction = interaction) == False:
-			return await interaction.response.edit_message(content = f":no_entry_sign: Your permission to use this command has been denied.")
+			return
 		try:
 			await self.bot.load_extension(f"cogs.{extension}")
 			self.bot.UNLOADED_EXTENSIONS.remove(extension)
@@ -112,7 +112,7 @@ class Core(commands.Cog):
 			ephemeral = True
 		)
 		if await self.bot.owner(interaction = interaction) == False:
-			return await interaction.response.edit_message(content = f":no_entry_sign: Your permission to use this command has been denied.")
+			return
 		try:
 			await self.bot.load_extension(f"cogs.{extension}")
 			self.bot.UNLOADED_EXTENSIONS.append(extension)
