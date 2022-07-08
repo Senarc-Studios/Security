@@ -31,6 +31,7 @@ class Buttons(View):
 		self.command_name = command_name
 		self.bot.temp_var = None
 		self.message_id = message_id
+		self.permission_granted = False
 
 	@button(
 		label = "Allow",
@@ -44,11 +45,8 @@ class Buttons(View):
 			f"You've allowed {interaction.user.mention} to use the `/{self.command_name}` once.",
 			view = self
 		)
-		button_cache.update(
-			{
-				self.message_id: True
-			}
-		)
+		
+		self.permission_granted = True
 
 	@button(
 		label = "Deny",
@@ -62,11 +60,7 @@ class Buttons(View):
 			f"You've denied {interaction.user.mention} to use the `/{self.command_name}`.",
 		)
 
-		button_cache.update(
-			{
-				self.message_id: False
-			}
-		)
+		self.permission_granted = False
 
 def get_loaded_extensions():
 	for extension in LOADED_EXTENSIONS:
@@ -151,21 +145,21 @@ class Security(commands.Bot):
 		else:
 			owner = await self.fetch_user(int(env("OWNER")))
 			await interaction.defer(ephemeral = True)
-			view = Buttons(
+			button = Buttons(
 				command_name = interaction.command.name,
 				bot = self,
 				message_id = interaction.message.id
 			)
 			await owner.send(
 				f"{interaction.user.mention} has requested to access `/{interaction.command.name}`.",
-				view = view
+				view = button
 			)
-			await view.wait()
+			await button.wait()
 			await interaction.send_message(
 				"Your permission to use this owner command has been denied.",
 				ephemeral = True
-			) if not button_cache.get(interaction.message.id) else None
-			return True if button_cache.get(interaction.message.id) else False
+			) if not button.permission_granted else None
+			return button.permission_granted
 
 	async def start(self, *args, **kwargs):
 		cool_utils.GlobalJSON.open('config')
