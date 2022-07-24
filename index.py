@@ -129,8 +129,6 @@ class Security(commands.Bot):
 		super().__init__(
 			command_prefix="!",
 			intents=intents,
-			slash_commands=True,
-			message_commands=True,
 			case_insensitive=True,
 			application_id=902464001101926450
 		)
